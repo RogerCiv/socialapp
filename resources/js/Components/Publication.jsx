@@ -9,7 +9,7 @@ import DangerButton from "./DangerButton";
 
 dayjs.extend(relativeTime);
 
-export default function Publication({ publication }) {
+export default function Publication({ publication, followers }) {
     const { auth } = usePage().props;
     const [editing, setEditing] = useState(false);
     const [liked, setLiked] = useState(publication.liked);
@@ -17,7 +17,7 @@ export default function Publication({ publication }) {
 
     const likedPublications = usePage().props.likePublications;
     const followUser = usePage().props.followers;
-
+    const isFollowing = followUser.includes(publication.user.id);
     const { data, setData, patch, clearErrors, reset, errors, post } = useForm({
         content: publication.content,
     });
@@ -28,6 +28,7 @@ export default function Publication({ publication }) {
             onSuccess: () => {
                 setLiked(true);
                 console.log('like', liked);
+                console.log("Like publications", likedPublications);
                 reset();
             },
             preserveScroll: true,
@@ -49,6 +50,7 @@ export default function Publication({ publication }) {
             onSuccess: () => {
                 setFollowed(true);
                 console.log('follow', followed);
+                console.log('follow followUser', followUser);
                 reset();
 
             },
@@ -79,14 +81,17 @@ export default function Publication({ publication }) {
     useEffect(() => {
         const isFollow = followUser.includes(publication.user.id);
         const isLiked = likedPublications.includes(publication.id);
-    
+
         setLiked(isLiked);
-        setFollowed(isFollow);
-    }, [followUser]);
+        // setFollowed(isFollow);
+        setFollowed(isFollowing);
+        console.log("followerssssssssss", followers);
+    }, []);
 
     return (
         <div className="p-6 flex space-x-2">
             {/* SVG icono de conversación */}
+
             <div className="flex-1">
                 <div className="flex justify-between items-center">
                     <div>
@@ -100,6 +105,7 @@ export default function Publication({ publication }) {
                             <small className="text-sm text-gray-600">
                                 {" "}
                                 &middot; edited
+
                             </small>
                         )}
                         {followed ? (
@@ -108,6 +114,7 @@ export default function Publication({ publication }) {
                                     handleUnfollow(publication.user.id)
                                 }
                             >
+
                                 Unfollow{" "}
                             </DangerButton>
                         ) : (
@@ -116,7 +123,7 @@ export default function Publication({ publication }) {
                                     handleFollow(publication.user.id)
                                 }
                             >
-                                Follow{" "}
+                                Follow
                             </DangerButton>
                         )}
                     </div>
@@ -187,20 +194,25 @@ export default function Publication({ publication }) {
                         <p className="mt-4 text-lg text-gray-900">
                             {publication.content}
                         </p>
-                        {liked ? (
-                            <PrimaryButton
+                        
+
+                            {liked ? (
+                                <PrimaryButton
                                 onClick={(e) => handleUnlike(publication.id, e)}
-                            >
-                                Unlike
-                            </PrimaryButton>
-                        ) : (
-                            <PrimaryButton
+                                >
+                                    Unlike
+                                </PrimaryButton>
+                            ) : (
+                                <PrimaryButton
                                 onClick={(e) => handleLike(publication.id, e)}
-                            >
-                                Like
-                            </PrimaryButton>
-                        )}
-                        <p>Likes: {publication.likes}</p>
+                                >
+                                    Like
+                                </PrimaryButton>
+                            )}
+             
+                            <p>Likes: {publication.likes}</p>
+                   
+                     
                     </>
                 )}
             </div>

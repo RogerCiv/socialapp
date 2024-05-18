@@ -34,6 +34,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/user/follow/{user}', [FollowerController::class, 'follow'])->name('user.follow');
     Route::post('/user/unfollow/{user}', [FollowerController::class, 'unfollow'])->name('user.unfollow');
+    Route::get('/user/followers/{user}', [FollowerController::class, 'getFollowers'])->name('user.followers');
 
     Route::resource('/publications', PublicationController::class);
 
