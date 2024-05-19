@@ -26,7 +26,7 @@ class PublicationResource extends JsonResource
                 // Añade otros campos del usuario que necesites
             ],
             'likes' => $this->likePublications->count(),
-            // 'liked' => $this->isLikedByUser(auth()->id()), // Añadir este campo
+            'liked' => $this->isLikedByUser(auth()->id()), // Añadir este campo
             'followed' => $user->followedUsers->contains($this->user->id), 
             'image' => $this->image,
         ];

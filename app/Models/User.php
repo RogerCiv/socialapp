@@ -75,4 +75,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $this->followers()->detach($user->id);
     }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 }

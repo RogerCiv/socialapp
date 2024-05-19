@@ -24,15 +24,20 @@ class Comment extends Model
         return $this->belongsTo(Publication::class);
     }
 
-    public function author():BelongsTo
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
+    // public function author():BelongsTo
+    // {
+    //     return $this->belongsTo(User::class, 'user_id');
+    // }
 
-  
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
     
     public function likes()
     {
         return $this->hasMany(LikeComment::class);
     }
+
+    
 }
