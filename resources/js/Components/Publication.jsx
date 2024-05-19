@@ -7,8 +7,9 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import Dropdown from "@/Components/Dropdown";
 import InputError from "@/Components/InputError";
 import PrimaryButton from "@/Components/PrimaryButton";
-import DangerButton from "./DangerButton";
+import CommentList from "./CommentList";
 import CreateComment from "./CreateComment";
+import SecondaryButton from "./SecondaryButton";
 
 dayjs.extend(relativeTime);
 
@@ -18,8 +19,9 @@ export default function Publication({ publication, followers }) {
   const [liked, setLiked] = useState(publication.liked);
   const [followed, setFollowed] = useState(publication.followed);
 
+  const [showComments, setShowComments] = useState(false); 
   const [showCommentForm, setShowCommentForm] = useState(false);
-  const [commentContent, setCommentContent] = useState("");
+
 
   const likedPublications = usePage().props.likePublications;
   const followUser = usePage().props.followers;
@@ -77,16 +79,7 @@ export default function Publication({ publication, followers }) {
     });
   };
 
-  const handleCommentSubmit = (e) => {
-    e.preventDefault();
-    post(route("comments.store", publication.id), {
-      data: { content: commentContent },
-      onSuccess: () => {
-        setCommentContent("");
-        setShowCommentForm(false);
-      },
-    });
-  }
+
 
   const submit = (e) => {
     e.preventDefault();
@@ -142,23 +135,35 @@ export default function Publication({ publication, followers }) {
         </>
       )}
       
-      <div className="flex justify-between items-center mt-4">
+      <div className="flex justify-between items-center justify-center mt-4">
         <div>
           <PrimaryButton className="flex" variant="ghost" onClick={(e) => liked ? handleUnlike(publication.id, e) : handleLike(publication.id, e)}>
             <FontAwesomeIcon icon={faThumbsUp} className="mr-2" />
             {liked ? 'Unlike' : 'Like'} {publication.likes}
           </PrimaryButton>
         </div>
+      
         <div>
           <PrimaryButton className="flex" variant="ghost" onClick={() => setShowCommentForm(true)}>
             <FontAwesomeIcon icon={faComment} className="mr-2" />
             Comment
           </PrimaryButton>
         </div>
+        <div className="">
+        <SecondaryButton className="flex" variant="ghost" onClick={() => setShowComments(!showComments)}>
+          <FontAwesomeIcon icon={faComment} className="mr-2" />
+          {showComments ? 'Hide Comments' : 'View Comments'}
+        </SecondaryButton>
+      </div>
       </div>
 
       {showCommentForm && (
         <CreateComment publication={publication} setShowCommentForm={setShowCommentForm} />
+      )}
+  
+
+      {showComments && (
+        <CommentList comments={publication.comments} />
       )}
     </div>
   );

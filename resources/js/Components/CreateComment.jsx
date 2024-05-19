@@ -11,6 +11,7 @@ export default function CreateComment({ publication,setShowCommentForm}){
   const { data, setData, post, processing, reset, errors } = useForm({
       content: "",
       image: "",
+      publication_id: publication.id,
   });
 
   const submit = (e) => {
@@ -20,7 +21,14 @@ export default function CreateComment({ publication,setShowCommentForm}){
           content: '',
           image: '',
         });
-      post(route("comments.store"), { onSuccess: () => reset() });
+      post(route("comments.store"), {
+        onSuccess: () => {
+          setShowCommentForm(false)
+          reset();
+        },
+        preserveScroll: true,
+      });
+      
   };
     return (
       <form onSubmit={submit}>
