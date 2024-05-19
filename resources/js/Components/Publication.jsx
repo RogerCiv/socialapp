@@ -8,6 +8,7 @@ import Dropdown from "@/Components/Dropdown";
 import InputError from "@/Components/InputError";
 import PrimaryButton from "@/Components/PrimaryButton";
 import DangerButton from "./DangerButton";
+import CreateComment from "./CreateComment";
 
 dayjs.extend(relativeTime);
 
@@ -16,6 +17,9 @@ export default function Publication({ publication, followers }) {
   const [editing, setEditing] = useState(false);
   const [liked, setLiked] = useState(publication.liked);
   const [followed, setFollowed] = useState(publication.followed);
+
+  const [showCommentForm, setShowCommentForm] = useState(false);
+  const [commentContent, setCommentContent] = useState("");
 
   const likedPublications = usePage().props.likePublications;
   const followUser = usePage().props.followers;
@@ -73,13 +77,23 @@ export default function Publication({ publication, followers }) {
     });
   };
 
+  const handleCommentSubmit = (e) => {
+    e.preventDefault();
+    post(route("comments.store", publication.id), {
+      data: { content: commentContent },
+      onSuccess: () => {
+        setCommentContent("");
+        setShowCommentForm(false);
+      },
+    });
+  }
+
   const submit = (e) => {
     e.preventDefault();
     patch(route("publications.update", publication.id), {
       onSuccess: () => setEditing(false),
     });
   };
-
   return (
     <div className="max-w-6xl bg-white border border-gray-200 rounded-lg shadow p-6 flex flex-col space-y-4">
       <div className="flex justify-between items-center">
@@ -130,21 +144,22 @@ export default function Publication({ publication, followers }) {
       
       <div className="flex justify-between items-center mt-4">
         <div>
-
-        <PrimaryButton className="flex" variant="ghost" onClick={(e) => liked ? handleUnlike(publication.id, e) : handleLike(publication.id, e)}>
-          <FontAwesomeIcon icon={faThumbsUp} className="mr-2" />
-          {liked ? 'Unlike' : 'Like'} {publication.likes}
-        </PrimaryButton>
+          <PrimaryButton className="flex" variant="ghost" onClick={(e) => liked ? handleUnlike(publication.id, e) : handleLike(publication.id, e)}>
+            <FontAwesomeIcon icon={faThumbsUp} className="mr-2" />
+            {liked ? 'Unlike' : 'Like'} {publication.likes}
+          </PrimaryButton>
         </div>
-        <PrimaryButton className="flex" variant="ghost">
-          <FontAwesomeIcon icon={faComment} className="mr-2" />
-          Comment
-        </PrimaryButton>
-        {/* <PrimaryButton className="flex-1" variant="ghost">
-          <FontAwesomeIcon icon={faShare} className="mr-2" />
-          Share
-        </PrimaryButton> */}
+        <div>
+          <PrimaryButton className="flex" variant="ghost" onClick={() => setShowCommentForm(true)}>
+            <FontAwesomeIcon icon={faComment} className="mr-2" />
+            Comment
+          </PrimaryButton>
+        </div>
       </div>
+
+      {showCommentForm && (
+        <CreateComment publication={publication} setShowCommentForm={setShowCommentForm} />
+      )}
     </div>
   );
 }
