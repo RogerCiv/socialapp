@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Publication;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PublicationResource;
 use App\Models\Follower;
+use App\Models\LikeComment;
 use App\Models\LikePublication;
 use App\Models\Publication;
 use Illuminate\Support\Facades\Gate;
@@ -20,31 +21,32 @@ class PublicationController extends Controller
   {
     $user = auth()->user();
 
-    // $likePublications = LikePublication::where('user_id', $user->id)->get();
+ 
     $likePublications = LikePublication::where('like_publications.user_id', $user->id)
       ->join('publications', 'publications.id', '=', 'like_publications.publication_id')
       ->pluck('publications.id')
       ->toArray();
     $followers = Follower::where('user_id', $user->id)->get();
-    // Obtener las publicaciones con los usuarios y comentarios relacionados
-    // $publications = Publication::with([
-    //   'user:id,name,avatar', // Asegúrate de seleccionar también el avatar del usuario
-    //   'comments' => function ($query) {
-    //     $query->with('user:id,name,avatar'); // Cargar el usuario del comentario con nombre y avatar
-    //   }
-    // ])->latest()->get();
+
     $publications = Publication::with([
-      'user:id,name,avatar', // Asegúrate de seleccionar también el avatar del usuario
-      'comments.user:id,name,avatar' // Cargar el usuario del comentario con nombre y avatar
+      'user:id,name,avatar',
+      'comments.user:id,name,avatar'
   ])->latest()->get();
+  $likeComments = LikeComment::where('like_comments.user_id', $user->id)
+  ->join('comments', 'comments.id', '=', 'like_comments.comment_id')
+  ->pluck('comments.id')
+  ->toArray();
+  // dd($likeComments);
     // dd($publications);
     return Inertia::render('Publications/Index', [
       // 'publications' => Publication::with('user:id,name')->latest()->get(),
       'publications' => $publications,
       'likePublications' => $likePublications,
       'followers' => $followers,
+      'likeComments' => $likeComments,
     ]);
   }
+   
 
   public function store(Request $request): RedirectResponse
   {

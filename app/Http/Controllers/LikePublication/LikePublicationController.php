@@ -10,23 +10,24 @@ use Illuminate\Http\Request;
 
 class LikePublicationController extends Controller
 {
-    public function getLikes(Publication $publication)
-    {
-        $user = auth()->user();
-        $likePublication = $publication->likePublications()->where('user_id', $user->id)->first();
+    // public function getLikes(Publication $publication)
+    // {
+    //     $user = auth()->user();
+    //     $likePublication = $publication->likePublications()->where('user_id', $user->id)->first();
 
-        dd($likePublication);
-        // return redirect(route('publications.index'));
-        return response()->json([
-            'likes' => $publication->likes,
-            'liked' => $likePublication ? true : false,
-        ]);
-    }
+    //     dd($likePublication);
+    //     // return redirect(route('publications.index'));
+    //     return response()->json([
+    //         'likes' => $publication->likes,
+    //         'liked' => $likePublication ? true : false,
+    //     ]);
+    // }
 
         public function like (Request $request,Publication $publication)
         {
            $user = auth()->user();
            // dd($user);
+          
            $publication = Publication::find($publication->id);
            // dd($publication);
            if($publication->likePublications()->where('user_id',$user->id)->exists()){
