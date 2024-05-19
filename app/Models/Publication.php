@@ -32,6 +32,11 @@ class Publication extends Model
         return $this->hasMany(Comment::class);
     }
 
+     // Relación con el modelo Publication
+    public function publication()
+    {
+        return $this->belongsTo(Publication::class);
+    }
     public function likePublications()
     {
         return $this->hasMany(LikePublication::class);
