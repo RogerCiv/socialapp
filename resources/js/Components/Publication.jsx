@@ -23,6 +23,7 @@ export default function Publication({ publication, followers }) {
   const [likedComments, setLikedComments] = useState({});
 
   const isFollowing = pageFollowers.includes(publication.user.id);
+  const isAuthor = auth.user.id === publication.user.id;
   const { data, setData, patch, clearErrors, reset, errors, post } = useForm({
     content: publication.content,
   });
@@ -86,7 +87,7 @@ export default function Publication({ publication, followers }) {
     e.preventDefault();
     patch(route("publications.update", publication.id), {
       onSuccess: () => {
-        setEditing(false)
+        setEditing(false);
       },
       preserveScroll: true,
     });
@@ -126,21 +127,23 @@ export default function Publication({ publication, followers }) {
             </small>
           </div>
         </div>
-        <Dropdown>
-          <Dropdown.Trigger>
-            <button className="text-gray-500">
-              <FontAwesomeIcon icon={faEllipsisV} />
-            </button>
-          </Dropdown.Trigger>
-          <Dropdown.Content>
-            <button className="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:bg-gray-100 transition duration-150 ease-in-out" onClick={() => setEditing(true)}>
-              Edit
-            </button>
-            <Dropdown.Link as="button" href={route("publications.destroy", publication.id)} method="delete">
-              Delete
-            </Dropdown.Link>
-          </Dropdown.Content>
-        </Dropdown>
+        {isAuthor && (
+          <Dropdown>
+            <Dropdown.Trigger>
+              <button className="text-gray-500">
+                <FontAwesomeIcon icon={faEllipsisV} />
+              </button>
+            </Dropdown.Trigger>
+            <Dropdown.Content>
+              <button className="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:bg-gray-100 transition duration-150 ease-in-out" onClick={() => setEditing(true)}>
+                Edit
+              </button>
+              <Dropdown.Link as="button" href={route("publications.destroy", publication.id)} method="delete">
+                Delete
+              </Dropdown.Link>
+            </Dropdown.Content>
+          </Dropdown>
+        )}
       </div>
 
       {editing ? (
