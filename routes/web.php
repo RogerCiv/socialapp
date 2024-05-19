@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\Comment\CommentController;
 use App\Http\Controllers\Follower\FollowerController;
 use App\Http\Controllers\Info\InfoController;
 use App\Http\Controllers\LikePublication\LikePublicationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Publication\PublicationController;
 use App\Http\Controllers\User\UserController;
+use App\Models\Comment;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -44,6 +46,11 @@ Route::middleware('auth')->group(function () {
 
 
     Route::resource('/publications', PublicationController::class);
+
+    Route::resource('/comments', CommentController::class)->only('store', 'destroy');
+    Route::post('/comments/{publication}/like', [CommentController::class, 'like'])->name('comments.like');
+    Route::post('/comments/{publication}/unlike', [CommentController::class, 'unlike'])->name('comments.unlike');
+    Route::get('/comments/{publication}/likes', [CommentController::class, 'getLikes'])->name('comments.likes');
     Route::resource('/info', InfoController::class);
 
     Route::get('/info', [PublicationController::class, 'getMyPublications'])->name('publications.my');

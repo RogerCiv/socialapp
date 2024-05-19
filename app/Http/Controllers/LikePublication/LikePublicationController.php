@@ -15,7 +15,7 @@ class LikePublicationController extends Controller
         $user = auth()->user();
         $likePublication = $publication->likePublications()->where('user_id', $user->id)->first();
 
-
+        dd($likePublication);
         // return redirect(route('publications.index'));
         return response()->json([
             'likes' => $publication->likes,
