@@ -9,6 +9,8 @@ class LikeComment extends Model
 {
     use HasFactory;
 
+    protected $table = 'like_comments';
+    
     protected $fillable = ['comment_id', 'user_id'];
 
 

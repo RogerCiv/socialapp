@@ -14,29 +14,32 @@ import SecondaryButton from "./SecondaryButton";
 dayjs.extend(relativeTime);
 
 export default function Publication({ publication, followers }) {
-  const { auth } = usePage().props;
+  const { auth, likePublications = [], likeComments = [], followers: pageFollowers = [] } = usePage().props;
   const [editing, setEditing] = useState(false);
   const [liked, setLiked] = useState(publication.liked);
   const [followed, setFollowed] = useState(publication.followed);
-
-  const [showComments, setShowComments] = useState(false); 
+  const [showComments, setShowComments] = useState(false);
   const [showCommentForm, setShowCommentForm] = useState(false);
+  const [likedComments, setLikedComments] = useState({});
 
-
-  const likedPublications = usePage().props.likePublications;
-  const followUser = usePage().props.followers;
-  const isFollowing = followUser.includes(publication.user.id);
+  const isFollowing = pageFollowers.includes(publication.user.id);
   const { data, setData, patch, clearErrors, reset, errors, post } = useForm({
     content: publication.content,
   });
 
   useEffect(() => {
-    const isFollow = followUser.includes(publication.user.id);
-    const isLiked = likedPublications.includes(publication.id);
+    const isFollow = pageFollowers.includes(publication.user.id);
+    const isLiked = likePublications.includes(publication.id);
 
     setLiked(isLiked);
-    setFollowed(isFollowing);
-  }, []);
+    setFollowed(isFollow);
+
+    const initialLikedComments = publication.comments.reduce((acc, comment) => {
+      acc[comment.id] = likeComments.includes(comment.id);
+      return acc;
+    }, {});
+    setLikedComments(initialLikedComments);
+  }, [likePublications, likeComments, pageFollowers, publication.user.id, publication.id, publication.comments]);
 
   const handleLike = (publicationId, e) => {
     e.preventDefault();
@@ -79,14 +82,38 @@ export default function Publication({ publication, followers }) {
     });
   };
 
-
-
   const submit = (e) => {
     e.preventDefault();
     patch(route("publications.update", publication.id), {
-      onSuccess: () => setEditing(false),
+      onSuccess: () => {
+        setEditing(false)
+      },
+      preserveScroll: true,
     });
   };
+
+  const handleLikeComment = (commentId, e) => {
+    e.preventDefault();
+    post(route("comments.like", commentId), {
+      onSuccess: () => {
+        setLikedComments((prev) => ({ ...prev, [commentId]: true }));
+        reset();
+      },
+      preserveScroll: true,
+    });
+  };
+
+  const handleUnlikeComment = (commentId, e) => {
+    e.preventDefault();
+    post(route("comments.unlike", commentId), {
+      onSuccess: () => {
+        setLikedComments((prev) => ({ ...prev, [commentId]: false }));
+        reset();
+      },
+      preserveScroll: true,
+    });
+  };
+
   return (
     <div className="max-w-6xl bg-white border border-gray-200 rounded-lg shadow p-6 flex flex-col space-y-4">
       <div className="flex justify-between items-center">
@@ -95,9 +122,8 @@ export default function Publication({ publication, followers }) {
           <div className="flex">
             <h5 className="text-sm font-bold">{publication.user.name}</h5>
             <small className="ml-2 text-sm text-gray-600">
-                            {dayjs(publication.created_at).fromNow()}...
-           </small>
-  
+              {dayjs(publication.created_at).fromNow()}...
+            </small>
           </div>
         </div>
         <Dropdown>
@@ -116,7 +142,7 @@ export default function Publication({ publication, followers }) {
           </Dropdown.Content>
         </Dropdown>
       </div>
-      
+
       {editing ? (
         <form onSubmit={submit}>
           <textarea value={data.content} onChange={(e) => setData("content", e.target.value)} className="mt-4 w-full text-gray-900 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"></textarea>
@@ -134,7 +160,7 @@ export default function Publication({ publication, followers }) {
           <p className="mt-4 text-gray-900">{publication.content}</p>
         </>
       )}
-      
+
       <div className="flex justify-between items-center justify-center mt-4">
         <div>
           <PrimaryButton className="flex" variant="ghost" onClick={(e) => liked ? handleUnlike(publication.id, e) : handleLike(publication.id, e)}>
@@ -142,7 +168,7 @@ export default function Publication({ publication, followers }) {
             {liked ? 'Unlike' : 'Like'} {publication.likes}
           </PrimaryButton>
         </div>
-      
+
         <div>
           <PrimaryButton className="flex" variant="ghost" onClick={() => setShowCommentForm(true)}>
             <FontAwesomeIcon icon={faComment} className="mr-2" />
@@ -150,20 +176,19 @@ export default function Publication({ publication, followers }) {
           </PrimaryButton>
         </div>
         <div className="">
-        <SecondaryButton className="flex" variant="ghost" onClick={() => setShowComments(!showComments)}>
-          <FontAwesomeIcon icon={faComment} className="mr-2" />
-          {showComments ? 'Hide Comments' : 'View Comments'}
-        </SecondaryButton>
-      </div>
+          <SecondaryButton className="flex" variant="ghost" onClick={() => setShowComments(!showComments)}>
+            <FontAwesomeIcon icon={faComment} className="mr-2" />
+            {showComments ? 'Hide Comments' : 'View Comments'}
+          </SecondaryButton>
+        </div>
       </div>
 
       {showCommentForm && (
         <CreateComment publication={publication} setShowCommentForm={setShowCommentForm} />
       )}
-  
 
       {showComments && (
-        <CommentList comments={publication.comments} />
+        <CommentList comments={publication.comments} likedComments={likedComments} handleLikeComment={handleLikeComment} handleUnlikeComment={handleUnlikeComment} />
       )}
     </div>
   );

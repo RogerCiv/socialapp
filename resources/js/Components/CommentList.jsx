@@ -1,42 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsisV, faThumbsUp, faComment, faShare } from "@fortawesome/free-solid-svg-icons";
-
+import { faThumbsUp } from "@fortawesome/free-solid-svg-icons";
 import PrimaryButton from "@/Components/PrimaryButton";
-import { useForm } from "@inertiajs/react";
 
 dayjs.extend(relativeTime);
 
-export default function CommentList({ comments }) {
-  const [liked, setLiked] = useState();
-
-
-  const { data, setData, patch, clearErrors, reset, errors, post } = useForm({
-    
-  });
-
-  const handleLike = (publicationId, e) => {
-    e.preventDefault();
-    post(route("comments.like", publicationId), {
-      onSuccess: () => {
-        setLiked(true);
-        reset();
-      },
-      preserveScroll: true,
-    });
-  };
-
-  const handleUnlike = (publicationId, e) => {
-    post(route("comments.unlike", publicationId), {
-      onSuccess: () => {
-        setLiked(false);
-        reset();
-      },
-      preserveScroll: true,
-    });
-  };
+export default function CommentList({ comments, likedComments, handleLikeComment, handleUnlikeComment }) {
   return (
     <div className="mt-4 space-y-4">
       {comments.map((comment) => (
@@ -52,11 +23,15 @@ export default function CommentList({ comments }) {
               <img className="rounded-lg object-cover mt-2" src={comment.image.startsWith("http") ? comment.image : `/storage/${comment.image}`} alt="Comment Image" />
             )}
             <div>
-          <PrimaryButton className="flex" variant="ghost" onClick={(e) => liked ? handleUnlike(comment.id, e) : handleLike(comment.id, e)}>
-            <FontAwesomeIcon icon={faThumbsUp} className="mr-2" />
-            {liked ? 'Unlike' : 'Like'} {comment.likes}
-          </PrimaryButton>
-        </div>
+              <PrimaryButton
+                className="flex"
+                variant="ghost"
+                onClick={(e) => likedComments[comment.id] ? handleUnlikeComment(comment.id, e) : handleLikeComment(comment.id, e)}
+              >
+                <FontAwesomeIcon icon={faThumbsUp} className="mr-2" />
+                {likedComments[comment.id] ? 'Unlike' : 'Like'} {comment.likes}
+              </PrimaryButton>
+            </div>
           </div>
         </div>
       ))}

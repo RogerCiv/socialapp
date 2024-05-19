@@ -7,7 +7,7 @@ import TextInput from "@/Components/TextInput";
 import { useForm, Head } from "@inertiajs/react";
 import Publication from "../../Components/Publication";
 
-export default function Index({ auth, publications }) {
+export default function Index({ auth, publications,followers }) {
     const fileInputRef = useRef(null);
     const { data, setData, post, processing, reset, errors } = useForm({
         content: "",
@@ -48,6 +48,7 @@ export default function Index({ auth, publications }) {
                         <Publication
                             key={publication.id}
                             publication={publication}
+                            followers={followers}
                         />
                     ))}
                 </div>
