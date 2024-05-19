@@ -10,6 +10,7 @@ use App\Models\Publication;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class PublicationController extends Controller
@@ -25,6 +26,7 @@ class PublicationController extends Controller
     ->pluck('publications.id')
     ->toArray();
     $followers =Follower::where('user_id', $user->id)->get();
+
     // dd($followers);
     return Inertia::render('Publications/Index', [
       'publications' => Publication::with('user:id,name')->latest()->get(),
@@ -52,8 +54,32 @@ class PublicationController extends Controller
 
   public function show(Publication $publication)
   {
-      // $userId = auth()->id();
-      // return new PublicationResource($publication->load('user', 'likePublications'));
+      $userId = auth()->id();
+      return new PublicationResource($publication->load('user', 'likePublications'));
+  }
+
+  public function getMyPublications()
+  {
+      $user = auth()->user();
+      $publicationsByUser = Publication::where('user_id', $user->id)->get();
+      $followers = Follower::where('user_id', $user->id)
+        ->join('users', 'follower_user.follower_id', '=', 'users.id')
+        ->select('follower_user.*', 'users.name as follower_name','users.avatar as follower_avatar')
+        ->get();
+        $top3Pub = Publication::select('user_id', DB::raw('count(*) as publications_count'))
+        ->groupBy('user_id')
+        ->orderByDesc('publications_count')
+        ->with('user:id,name,avatar') // Para obtener los detalles del usuario
+        ->take(3) // Puedes ajustar el número según lo necesites
+        ->get();
+    // dd($publicationsByUser);
+    // dd($followers);
+    // dd($top3Pub);
+      return Inertia::render('Info/Index', [
+          'publicationsByUser' =>  $publicationsByUser,
+          'followers' => $followers,
+          'top3Pub' => $top3Pub,
+      ]);
   }
 
   public function update(Request $request, Publication $publication): RedirectResponse
