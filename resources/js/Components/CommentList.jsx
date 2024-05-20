@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -7,18 +7,22 @@ import { usePage, useForm } from "@inertiajs/react";
 import Dropdown from "@/Components/Dropdown";
 import PrimaryButton from "@/Components/PrimaryButton";
 import InputError from "@/Components/InputError";
+import TextInput from "./TextInput";
 
 dayjs.extend(relativeTime);
 
 export default function CommentList({ comments, likedComments, handleLikeComment, handleUnlikeComment }) {
   const { auth } = usePage().props;
+  const fileInputRef = useRef(null);
+
 
   const [editingCommentId, setEditingCommentId] = useState(null);
-  const { data, setData, patch, clearErrors, reset, errors } = useForm({ content: "" });
+  const { data, setData, post, clearErrors, reset, errors } = useForm({ content: "" });
 
   const submit = (commentId, e) => {
     e.preventDefault();
-    patch(route("comments.update", commentId), {
+    post(route("comments.update", commentId), {
+      method: "patch",
       onSuccess: () => {
         setEditingCommentId(null);
       },
@@ -72,6 +76,8 @@ export default function CommentList({ comments, likedComments, handleLikeComment
                 <form onSubmit={(e) => submit(comment.id, e)}>
                   <textarea value={data.content} onChange={(e) => setData("content", e.target.value)} className="mt-2 w-full text-gray-900 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"></textarea>
                   <InputError content={errors.content} className="mt-2" />
+                  <TextInput label='Imagen' type='file' name='image' id='image' ref={fileInputRef}
+                    onChange={(e) => setData('image', e.target.files[0])} />
                   <div className="space-x-2 mt-2">
                     <PrimaryButton>Save</PrimaryButton>
                     <button onClick={cancelEditing}>Cancel</button>

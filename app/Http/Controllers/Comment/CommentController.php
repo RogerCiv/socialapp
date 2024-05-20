@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Comment;
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
 use App\Models\LikeComment;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class CommentController extends Controller
 {
@@ -79,6 +81,41 @@ class CommentController extends Controller
             $comment->decrement('likes');
         }
 
+        return redirect()->back();
+    }
+
+    public function update(Request $request,Comment $comment)
+    {
+        Gate::authorize('update', $comment);
+
+        $validated = $request->validate([
+            'content' => 'required|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048' // Validación de la imagen
+        ]);
+        if($request->hasFile('image')){
+            if($comment->image){
+                Storage::disk('public')->delete($comment->image);
+              }
+            $imagePath = $request->file('image')->store('comments', 'public');
+            $validated['image'] = $imagePath;
+        }
+        $comment->update($validated);
+
+
+        return redirect()->back();
+    }
+
+    
+
+
+    public function destroy(Comment $comment)
+    {
+    
+        Gate::authorize('delete', $comment);
+
+        $comment->delete();
+    
+        // return redirect(route('publications.index'));
         return redirect()->back();
     }
     

@@ -16,11 +16,11 @@ export default function Index({ auth, publications,followers }) {
 
     const submit = (e) => {
         e.preventDefault();
+        post(route("publications.store"), { onSuccess: () => reset() });
         setData({
             content: '',
             image: '',
           });
-        post(route("publications.store"), { onSuccess: () => reset() });
     };
 
     return (

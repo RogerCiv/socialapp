@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisV, faThumbsUp, faComment, faShare } from "@fortawesome/free-solid-svg-icons";
 import { useForm, usePage } from "@inertiajs/react";
@@ -10,6 +10,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import CommentList from "./CommentList";
 import CreateComment from "./CreateComment";
 import SecondaryButton from "./SecondaryButton";
+import TextInput from "./TextInput";
 
 dayjs.extend(relativeTime);
 
@@ -22,11 +23,16 @@ export default function Publication({ publication, followers }) {
   const [showCommentForm, setShowCommentForm] = useState(false);
   const [likedComments, setLikedComments] = useState({});
 
+  const fileInputRef = useRef(null);
+
+
   const isFollowing = pageFollowers.includes(publication.user.id);
   const isAuthor = auth.user.id === publication.user.id;
   const { data, setData, patch, clearErrors, reset, errors, post } = useForm({
     content: publication.content,
+    image: publication.image,
   });
+
 
   useEffect(() => {
     const isFollow = pageFollowers.includes(publication.user.id);
@@ -85,7 +91,13 @@ export default function Publication({ publication, followers }) {
 
   const submit = (e) => {
     e.preventDefault();
-    patch(route("publications.update", publication.id), {
+    const formData = new FormData();
+    formData.append("content", data.content);
+    if(data.image) {
+      formData.append("image", data.image);
+    }
+    post(route("publications.update", publication.id), {
+      method: "patch",
       onSuccess: () => {
         setEditing(false);
       },
@@ -101,6 +113,9 @@ export default function Publication({ publication, followers }) {
         reset();
       },
       preserveScroll: true,
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
     });
   };
 
@@ -150,6 +165,8 @@ export default function Publication({ publication, followers }) {
         <form onSubmit={submit}>
           <textarea value={data.content} onChange={(e) => setData("content", e.target.value)} className="mt-4 w-full text-gray-900 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"></textarea>
           <InputError content={errors.content} className="mt-2" />
+          <TextInput label='Imagen' type='file' name='image' id='image' ref={fileInputRef}
+            onChange={(e) => setData('image', e.target.files[0])} />
           <div className="space-x-2 mt-4">
             <PrimaryButton>Save</PrimaryButton>
             <button onClick={() => { setEditing(false); reset(); clearErrors(); }}>Cancel</button>

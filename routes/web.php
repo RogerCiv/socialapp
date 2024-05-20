@@ -45,9 +45,21 @@ Route::middleware('auth')->group(function () {
     Route::get('/user/followers/{user}', [FollowerController::class, 'getFollowers'])->name('user.followers');
 
 
-    Route::resource('/publications', PublicationController::class);
+    // Route::resource('/publications', PublicationController::class);
+    Route::get('/publications', [PublicationController::class, 'index'])->name('publications.index');
+    Route::post('/publications', [PublicationController::class, 'store'])->name('publications.store');
+    Route::get('/publications/{publication}', [PublicationController::class, 'show'])->name('publications.show');
+    Route::get('/publications/{publication}/edit', [PublicationController::class, 'edit'])->name('publications.edit');
+    Route::post('/publications/{publication}', [PublicationController::class, 'update'])->name('publications.update');
+    Route::delete('/publications/{publication}', [PublicationController::class, 'destroy'])->name('publications.destroy');
 
-    Route::resource('/comments', CommentController::class)->only('store', 'destroy');
+    // Route::resource('/comments', CommentController::class);
+    Route::get('/comments', [CommentController::class, 'getComments'])->name('comments.index');
+    Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
+    Route::get('/comments/{comment}', [CommentController::class, 'show'])->name('comments.show');
+    Route::get('/comments/{comment}/edit', [CommentController::class, 'edit'])->name('comments.edit');
+    Route::post('/comments/{comment}', [CommentController::class, 'update'])->name('comments.update');
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
     Route::post('/comments/{publication}/like', [CommentController::class, 'like'])->name('comments.like');
     Route::post('/comments/{publication}/unlike', [CommentController::class, 'unlike'])->name('comments.unlike');
     Route::get('/comments/{publication}/likes', [CommentController::class, 'getLikes'])->name('comments.likes');

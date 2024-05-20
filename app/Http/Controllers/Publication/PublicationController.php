@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class PublicationController extends Controller
@@ -98,11 +99,20 @@ class PublicationController extends Controller
   public function update(Request $request, Publication $publication): RedirectResponse
   {
     //
+    // dd($request->all(), $publication);
     Gate::authorize('update', $publication);
 
     $validated = $request->validate([
       'content' => 'required|string|max:255',
+      'image' => 'nullable|image|max:1024',
     ]);
+    if($request->hasFile('image')){
+      if($publication->image){
+        Storage::disk('public')->delete($publication->image);
+      }
+      $path = $request->file('image')->store('images', ['disk' => 'public']);
+      $validated['image'] = $path;
+    }
 
     $publication->update($validated);
 
