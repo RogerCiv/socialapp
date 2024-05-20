@@ -69,7 +69,10 @@ class PublicationController extends Controller
   public function show(Publication $publication)
   {
     $userId = auth()->id();
-    return new PublicationResource($publication->load('user', 'likePublications'));
+    // return new PublicationResource($publication->load('user', 'likePublications','comments'));
+    return inertia('Publications/PublicationShow', [
+      'publication' => $publication->load('comments', 'user'), // Carga los comentarios y el usuario de la publicación
+  ]);
   }
 
   public function getMyPublications()

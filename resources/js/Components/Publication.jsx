@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisV, faThumbsUp, faComment, faShare } from "@fortawesome/free-solid-svg-icons";
-import { useForm, usePage } from "@inertiajs/react";
+import { Link, useForm, usePage } from "@inertiajs/react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Dropdown from "@/Components/Dropdown";
@@ -25,7 +25,6 @@ export default function Publication({ publication, followers }) {
 
   const fileInputRef = useRef(null);
 
-
   const isFollowing = pageFollowers.includes(publication.user.id);
   const isAuthor = auth.user.id === publication.user.id;
   const { data, setData, patch, clearErrors, reset, errors, post } = useForm({
@@ -33,10 +32,10 @@ export default function Publication({ publication, followers }) {
     image: publication.image,
   });
 
-
   useEffect(() => {
     const isFollow = pageFollowers.includes(publication.user.id);
     const isLiked = likePublications.includes(publication.id);
+    console.log('Publication desde el index: ', publication)
 
     setLiked(isLiked);
     setFollowed(isFollow);
@@ -201,6 +200,10 @@ export default function Publication({ publication, followers }) {
             {showComments ? 'Hide Comments' : 'View Comments'}
           </SecondaryButton>
         </div>
+       <Link href={route('publications.show', publication)} className="flex">
+          <FontAwesomeIcon icon={faShare} className="mr-2" />
+          Share
+        </Link>
       </div>
 
       {showCommentForm && (

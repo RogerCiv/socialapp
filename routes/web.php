@@ -49,7 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/publications', [PublicationController::class, 'index'])->name('publications.index');
     Route::post('/publications', [PublicationController::class, 'store'])->name('publications.store');
     Route::get('/publications/{publication}', [PublicationController::class, 'show'])->name('publications.show');
-    Route::get('/publications/{publication}/edit', [PublicationController::class, 'edit'])->name('publications.edit');
+    
     Route::post('/publications/{publication}', [PublicationController::class, 'update'])->name('publications.update');
     Route::delete('/publications/{publication}', [PublicationController::class, 'destroy'])->name('publications.destroy');
 

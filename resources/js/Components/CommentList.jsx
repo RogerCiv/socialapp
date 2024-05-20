@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,10 +11,13 @@ import TextInput from "./TextInput";
 
 dayjs.extend(relativeTime);
 
-export default function CommentList({ comments, likedComments, handleLikeComment, handleUnlikeComment }) {
+export default function CommentList({ comments, user, likedComments, handleLikeComment, handleUnlikeComment }) {
   const { auth } = usePage().props;
   const fileInputRef = useRef(null);
 
+  if (!comments) {
+    return null; // O puedes devolver un mensaje indicando que no hay comentarios
+  }
 
   const [editingCommentId, setEditingCommentId] = useState(null);
   const { data, setData, post, clearErrors, reset, errors } = useForm({ content: "" });
@@ -40,10 +43,14 @@ export default function CommentList({ comments, likedComments, handleLikeComment
     reset();
     clearErrors();
   };
+  useEffect(() => {
+    console.log('comments', comments)
+    console.log("user", user);
+  },[])
 
   return (
     <div className="mt-4 space-y-4">
-      {comments.map((comment) => {
+      {/* {comments.map((comment) => {
         const isAuthor = auth.user.id === comment.user.id;
 
         return (
@@ -105,7 +112,7 @@ export default function CommentList({ comments, likedComments, handleLikeComment
             </div>
           </div>
         );
-      })}
+      })} */}
     </div>
   );
 }

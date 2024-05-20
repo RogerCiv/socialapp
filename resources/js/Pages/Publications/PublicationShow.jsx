@@ -1,0 +1,175 @@
+import React, { useEffect, useRef, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEllipsisV, faThumbsUp, faComment } from "@fortawesome/free-solid-svg-icons";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import PrimaryButton from "@/Components/PrimaryButton";
+import SecondaryButton from "@/Components/SecondaryButton";
+import CommentList from "@/Components/CommentList";
+import CreateComment from "@/Components/CreateComment";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import Dropdown from "@/Components/Dropdown";
+import TextInput from "@/Components/TextInput";
+import InputError from "@/Components/InputError";
+import { useForm, usePage } from "@inertiajs/react";
+
+dayjs.extend(relativeTime);
+
+export default function PublicationShow({ publication, auth }) {
+  const { likePublications = [], likeComments = [], followers: pageFollowers = [] } = usePage().props;
+  const [editing, setEditing] = useState(false);
+  const [liked, setLiked] = useState(publication.liked);
+  const [followed, setFollowed] = useState(publication.followed);
+  const [showComments, setShowComments] = useState(false);
+  const [showCommentForm, setShowCommentForm] = useState(false);
+  const [likedComments, setLikedComments] = useState({});
+
+  const fileInputRef = useRef(null);
+
+  const { data, setData, patch, clearErrors, reset, errors, post } = useForm({
+    content: publication.content,
+    image: publication.image,
+  });
+
+  useEffect(() => {
+    const isFollow = pageFollowers.includes(publication.user.id);
+    const isLiked = likePublications.includes(publication.id);
+
+    setLiked(isLiked);
+    setFollowed(isFollow);
+    console.log("Publicaion desde Publication: ", publication);
+    const initialLikedComments = publication.comments.reduce((acc, comment) => {
+      acc[comment.id] = likeComments.includes(comment.id);
+      return acc;
+    }, {});
+    setLikedComments(initialLikedComments);
+  }, []);
+  const isAuthor = auth.user.id === publication.user.id;
+
+  const handleLike = (publicationId) => {
+    // Lógica para manejar el like de la publicación
+  };
+
+  const handleUnlike = (publicationId) => {
+    // Lógica para manejar el unlike de la publicación
+  };
+
+  const handleLikeComment = (commentId) => {
+    // Lógica para manejar el like de un comentario
+  };
+
+  const handleUnlikeComment = (commentId) => {
+    // Lógica para manejar el unlike de un comentario
+  };
+
+
+  const submit = (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("content", data.content);
+    if (data.image) {
+      formData.append("image", data.image);
+    }
+    post(route("publications.update", publication.id), {
+      method: "patch",
+      onSuccess: () => {
+        setEditing(false);
+      },
+      preserveScroll: true,
+    });
+  };
+
+  return (
+    <AuthenticatedLayout user={auth.user}>
+
+      <div className="max-w-6xl bg-white border border-gray-200 rounded-lg shadow p-6">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center space-x-4">
+            <img className="rounded-full w-12 h-12" src={publication.user.avatar} alt={publication.user.name} />
+            <div className="flex">
+              <h5 className="text-sm font-bold">{publication.user.name}</h5>
+              <small className="ml-2 text-sm text-gray-600">
+                {dayjs(publication.created_at).fromNow()}...
+              </small>
+            </div>
+          </div>
+          {isAuthor && (
+            <Dropdown>
+              <Dropdown.Trigger>
+                <button className="text-gray-500">
+                  <FontAwesomeIcon icon={faEllipsisV} />
+                </button>
+              </Dropdown.Trigger>
+              <Dropdown.Content>
+                <button className="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:bg-gray-100 transition duration-150 ease-in-out" onClick={() => setEditing(true)}>
+                  Edit
+                </button>
+                <Dropdown.Link as="button" href={route("publications.destroy", publication.id)} method="delete">
+                  Delete
+                </Dropdown.Link>
+              </Dropdown.Content>
+            </Dropdown>
+          )}
+        </div>
+        {editing ? (
+          <form onSubmit={submit}>
+            <textarea value={data.content} onChange={(e) => setData("content", e.target.value)} className="mt-4 w-full text-gray-900 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"></textarea>
+            <InputError content={errors.content} className="mt-2" />
+            <TextInput label='Imagen' type='file' name='image' id='image' ref={fileInputRef}
+              onChange={(e) => setData('image', e.target.files[0])} />
+            <div className="space-x-2 mt-4">
+              <PrimaryButton>Save</PrimaryButton>
+              <button onClick={() => { setEditing(false); reset(); clearErrors(); }}>Cancel</button>
+            </div>
+          </form>
+        ) : (
+          <>
+            {publication.image && (
+              <img className="rounded-lg object-cover" src={publication.image.startsWith("http") ? publication.image : `/storage/${publication.image}`} alt="Publication Image" />
+            )}
+            <p className="mt-4 text-gray-900">{publication.content}</p>
+          </>
+        )}
+
+        <div className="flex justify-between items-center justify-center mt-4">
+          <div>
+            <PrimaryButton className="flex" variant="ghost" onClick={() => liked ? handleUnlike(publication.id) : handleLike(publication.id)}>
+              <FontAwesomeIcon icon={faThumbsUp} className="mr-2" />
+              {liked ? 'Unlike' : 'Like'} {publication.likes}
+            </PrimaryButton>
+          </div>
+
+          <div>
+            <PrimaryButton className="flex" variant="ghost" onClick={() => setShowCommentForm(true)}>
+              <FontAwesomeIcon icon={faComment} className="mr-2" />
+              Comment
+            </PrimaryButton>
+          </div>
+          <div className="">
+            <SecondaryButton className="flex" variant="ghost" onClick={() => setShowComments(!showComments)}>
+              <FontAwesomeIcon icon={faComment} className="mr-2" />
+              {showComments ? 'Hide Comments' : 'View Comments'}
+            </SecondaryButton>
+          </div>
+        </div>
+
+        {showCommentForm && (
+          <CreateComment publication={publication} setShowCommentForm={setShowCommentForm} />
+        )}
+
+        {showComments && publication.comments && (
+          <CommentList comments={publication.comments} user={publication.user} likedComments={likedComments} handleLikeComment={handleLikeComment} handleUnlikeComment={handleUnlikeComment} />
+        )}
+
+        {
+          publication.comments.map(comment => (
+            <div key={comment.id}>
+              <p>{comment.user}</p>
+            </div>
+          ))
+        }
+
+      </div>
+    </AuthenticatedLayout>
+  );
+}

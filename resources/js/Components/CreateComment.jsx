@@ -16,7 +16,6 @@ export default function CreateComment({ publication,setShowCommentForm}){
 
   const submit = (e) => {
       e.preventDefault();
-      console.log(data);
       setData({
           content: '',
           image: '',
