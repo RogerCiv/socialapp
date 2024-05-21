@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import DeleteUserForm from "./Partials/DeleteUserForm";
 import UpdatePasswordForm from "./Partials/UpdatePasswordForm";
@@ -6,11 +6,11 @@ import UpdateProfileInformationForm from "./Partials/UpdateProfileInformationFor
 import { Head } from "@inertiajs/react";
 
 export default function Edit({ auth, mustVerifyEmail, status, followers, publications, user }) {
-    useEffect(() => {
-        console.log("Followers:", followers);
-        console.log("Publications:", publications);
-        console.log("User:", user);
-    }, [followers, publications, user]);
+    // useEffect(() => {
+    //     console.log("Followers:", followers);
+    //     console.log("Publications:", publications);
+    //     console.log("User:", user);
+    // }, [followers, publications, user]);
 
     return (
         <AuthenticatedLayout

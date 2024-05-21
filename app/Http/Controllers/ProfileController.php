@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\Publication;
+use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,16 +15,27 @@ use Inertia\Response;
 
 class ProfileController extends Controller
 {
-    public function index()
+    public function index(User $user)
     {
-        // $user = auth()->user();
-        $user = Auth::user();
-        $followers = $user->followers()->get();
-        $publications = Publication::with('user:id,name')->latest()->get();
-  
+        // dd($user);
+        return Inertia::render('Profile/View', [
+            'mustVerifyEmail' => $user instanceof MustVerifyEmail,
+            'status' => session('status'),
+            'user' => $user,
 
-        return Inertia::render('Info/Index');
+        ]);
+
     }
+    // public function index()
+    // {
+    //     // $user = auth()->user();
+    //     $user = Auth::user();
+    //     $followers = $user->followers()->get();
+    //     $publications = Publication::with('user:id,name')->latest()->get();
+
+
+    //     return Inertia::render('Info/Index');
+    // }
     /**
      * Display the user's profile form.
      */

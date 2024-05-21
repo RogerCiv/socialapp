@@ -16,6 +16,7 @@ dayjs.extend(relativeTime);
 
 export default function Publication({ publication, followers }) {
   const { auth, likePublications = [], likeComments = [], followers: pageFollowers = [] } = usePage().props;
+  const authUser = usePage().props.auth.user;
   const [editing, setEditing] = useState(false);
   const [liked, setLiked] = useState(publication.liked);
   const [followed, setFollowed] = useState(publication.followed);
@@ -35,10 +36,10 @@ export default function Publication({ publication, followers }) {
   useEffect(() => {
     const isFollow = pageFollowers.includes(publication.user.id);
     const isLiked = likePublications.includes(publication.id);
-    console.log('Publication desde el index: ', publication)
 
     setLiked(isLiked);
     setFollowed(isFollow);
+   
 
     const initialLikedComments = publication.comments.reduce((acc, comment) => {
       acc[comment.id] = likeComments.includes(comment.id);
@@ -68,7 +69,9 @@ export default function Publication({ publication, followers }) {
     });
   };
 
-  const handleFollow = (userId) => {
+  const handleFollow = (userId, e) => {
+    e.preventDefault();
+
     post(route("user.follow", userId), {
       onSuccess: () => {
         setFollowed(true);
@@ -78,7 +81,8 @@ export default function Publication({ publication, followers }) {
     });
   };
 
-  const handleUnfollow = (userId) => {
+  const handleUnfollow = (userId, e) => {
+    e.preventDefault();
     post(route("user.unfollow", userId), {
       onSuccess: () => {
         setFollowed(false);
@@ -92,7 +96,7 @@ export default function Publication({ publication, followers }) {
     e.preventDefault();
     const formData = new FormData();
     formData.append("content", data.content);
-    if(data.image) {
+    if (data.image) {
       formData.append("image", data.image);
     }
     post(route("publications.update", publication.id), {
@@ -112,9 +116,6 @@ export default function Publication({ publication, followers }) {
         reset();
       },
       preserveScroll: true,
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
     });
   };
 
@@ -139,6 +140,15 @@ export default function Publication({ publication, followers }) {
             <small className="ml-2 text-sm text-gray-600">
               {dayjs(publication.created_at).fromNow()}...
             </small>
+            {!isAuthor && (
+              <PrimaryButton
+                className="ml-2"
+                variant="ghost"
+                onClick={(e) => (followed ? handleUnfollow(publication.user.id, e) : handleFollow(publication.user.id, e))}
+              >
+                {followed ? 'Unfollow' : 'Follow'}
+              </PrimaryButton>
+            )}
           </div>
         </div>
         {isAuthor && (
@@ -200,11 +210,12 @@ export default function Publication({ publication, followers }) {
             {showComments ? 'Hide Comments' : 'View Comments'}
           </SecondaryButton>
         </div>
-       <Link href={route('publications.show', publication)} className="flex">
+        <Link href={route('publications.show', publication)} className="flex">
           <FontAwesomeIcon icon={faShare} className="mr-2" />
           Share
         </Link>
       </div>
+
 
       {showCommentForm && (
         <CreateComment publication={publication} setShowCommentForm={setShowCommentForm} />

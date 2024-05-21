@@ -44,13 +44,11 @@ export default function CommentList({ comments, user, likedComments, handleLikeC
     clearErrors();
   };
   useEffect(() => {
-    console.log('comments', comments)
-    console.log("user", user);
   },[])
 
   return (
     <div className="mt-4 space-y-4">
-      {/* {comments.map((comment) => {
+      {comments.map((comment) => {
         const isAuthor = auth.user.id === comment.user.id;
 
         return (
@@ -112,7 +110,7 @@ export default function CommentList({ comments, user, likedComments, handleLikeC
             </div>
           </div>
         );
-      })} */}
+      })}
     </div>
   );
 }

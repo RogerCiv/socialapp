@@ -25,6 +25,8 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/u/{user:name}',[ProfileController::class, 'index'])->middleware(['auth', 'verified'])->name('profile');
+
 Route::middleware('auth')->group(function () {
 
     // Route::resource('/info', ProfileController::class);
@@ -40,9 +42,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/publications/{publication}/likes', [LikePublicationController::class, 'getLikes'])->name('publications.likes');
 
 
-    Route::post('/user/follow/{user}', [FollowerController::class, 'follow'])->name('user.follow');
-    Route::post('/user/unfollow/{user}', [FollowerController::class, 'unfollow'])->name('user.unfollow');
-    Route::get('/user/followers/{user}', [FollowerController::class, 'getFollowers'])->name('user.followers');
+    Route::post('/user/follow/{user}', [UserController::class, 'follow'])->name('user.follow');
+    Route::post('/user/unfollow/{user}', [UserController::class, 'unfollow'])->name('user.unfollow');
+    Route::get('/user/followers/{user}', [UserController::class, 'getFollowers'])->name('user.followers');
 
 
     // Route::resource('/publications', PublicationController::class);
