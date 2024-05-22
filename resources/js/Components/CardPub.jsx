@@ -1,17 +1,22 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faThumbsUp, faComment, faShare } from "@fortawesome/free-solid-svg-icons";
+import { faThumbsUp, faComment, faEye  } from "@fortawesome/free-solid-svg-icons";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import {useForm} from "@inertiajs/react";
+import { useForm } from "@inertiajs/react";
+import CreateComment from "@/Components/CreateComment.jsx";
+import CommentList from "@/Components/CommentList.jsx";
 
 dayjs.extend(relativeTime);
 
 export default function CardPub({ publication }) {
     const [liked, setLiked] = useState(false);
-    const { post,reset } = useForm();
+    const [showCommentForm, setShowCommentForm] = useState(false);
+    const [showComments, setShowComments] = useState(false);
+    const { post, reset } = useForm();
+
     const handleLike = (publicationId, e) => {
-        e.preventDefault(); // Asegúrate de que e esté definido correctamente
+        e.preventDefault();
         post(route("publications.like", publicationId), {
             onSuccess: () => {
                 setLiked(true);
@@ -20,7 +25,6 @@ export default function CardPub({ publication }) {
             preserveScroll: true,
         });
     };
-
 
     const handleUnlike = (publicationId, e) => {
         post(route("publications.unlike", publicationId), {
@@ -31,6 +35,17 @@ export default function CardPub({ publication }) {
             preserveScroll: true,
         });
     };
+
+    const toggleCommentForm = () => {
+        setShowCommentForm(!showCommentForm);
+    };
+    const toggleComments = () => {
+        setShowComments(!showComments);
+    }
+    const handleSubmitComment = (e) => {
+        e.preventDefault();
+        console.log(comment);
+    }
 
     return (
         <div className="max-w-6xl bg-white border border-gray-200 rounded-lg shadow p-6 flex flex-col space-y-4">
@@ -45,11 +60,9 @@ export default function CardPub({ publication }) {
             </div>
 
             {publication.image && (
-                // <img className="rounded-lg object-cover" src={`/storage/${publication.image}`} alt="Publication Image" />
                 <img className="rounded-lg object-cover"
                      src={publication.image.startsWith("http") ? publication.image : `/storage/${publication.image}`}
                      alt="Publication Image"/>
-
             )}
 
             <p className="mt-4 text-gray-900">{publication.content}</p>
@@ -61,17 +74,23 @@ export default function CardPub({ publication }) {
                     {liked ? 'Unlike' : 'Like'}
                 </button>
 
-
-                <button className="flex">
+                <button className="flex" onClick={toggleCommentForm}>
                     <FontAwesomeIcon icon={faComment} className="mr-2"/>
                     Comment
                 </button>
 
-                <button className="flex">
-                    <FontAwesomeIcon icon={faShare} className="mr-2"/>
-                    Share
+                <button className="flex" onClick={toggleComments}>
+                    <FontAwesomeIcon icon={faEye} className="mr-2"/>
+                    Ver comentarios
                 </button>
             </div>
+
+            {showCommentForm && (
+                <CreateComment publication={publication} setShowCommentForm={setShowCommentForm}/>
+            )}
+            {showComments && (
+                <CommentList comments={publication.comments} likedComments={likedComments} handleLikeComment={handleLikeComment} handleUnlikeComment={handleUnlikeComment} />
+            )}
         </div>
     );
 }

@@ -32,9 +32,9 @@ class ProfileController extends Controller
             ->with([
                 'user:id,name,avatar',
                 'comments' => function($query) {
-                    $query->with('user:id,name,avatar'); // Cargar el usuario que hizo el comentario
+                    $query->with('user:id,name,avatar');
                 },
-                'likes:id' // Cargar usuarios que dieron like a la publicación
+                'likes:id'
             ])
             ->latest()
             ->get();

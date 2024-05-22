@@ -44,9 +44,6 @@ class LikePublicationController extends Controller
 //           return redirect(route('publications.index'));
     //      return to_route('publications.index');
             return back()->with('success', "You liked the publication!");
-
-
-
         }
 
 
