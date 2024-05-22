@@ -27,7 +27,7 @@ class LikePublicationController extends Controller
         {
            $user = auth()->user();
            // dd($user);
-          
+
            $publication = Publication::find($publication->id);
            // dd($publication);
            if($publication->likePublications()->where('user_id',$user->id)->exists()){
@@ -41,9 +41,9 @@ class LikePublicationController extends Controller
            $like->save();
 
            $publication->increment('likes');
-           return redirect(route('publications.index'));
+//           return redirect(route('publications.index'));
     //      return to_route('publications.index');
-        //    return back();
+            return back()->with('success', "You liked the publication!");
 
 
 
@@ -57,10 +57,12 @@ class LikePublicationController extends Controller
             $like = $publication->likePublications()->where('user_id',$user->id)->first();
             $like->delete();
             $publication->decrement('likes');
-            return redirect(route('publications.index'));
-        }
-  
+//            return redirect(route('publications.index'));
+            return back()->with('success', "You unliked the publication!");
 
-    
-    
+        }
+
+
+
+
 }

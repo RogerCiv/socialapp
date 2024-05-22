@@ -51,10 +51,10 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Publication::class);
     }
-    public function likedPublications()
-    {
-        return $this->belongsToMany(Publication::class, 'like_publications', 'user_id', 'publication_id');
-    }
+//    public function likedPublications()
+//    {
+//        return $this->belongsToMany(Publication::class, 'like_publications', 'user_id', 'publication_id');
+//    }
 
     public function followers()
     {
@@ -65,6 +65,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->followers()->where('user_id', $user->id)->count() > 0;
     }
 
+    public function likedPublications()
+    {
+        return $this->belongsToMany(Publication::class, 'likes')
+            ->withTimestamps();
+    }
 
     public function follow(User $user)
     {

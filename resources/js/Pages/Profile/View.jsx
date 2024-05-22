@@ -5,8 +5,10 @@ import {faPenToSquare} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useForm} from "@inertiajs/react";
 import DangerButton from "@/Components/DangerButton.jsx";
+import Publication from "@/Components/Publication.jsx";
+import CardPub from "@/Components/CardPub.jsx";
 
-export default function View({mustVerifyEmail, status, auth, user, props, isCurrentUserFollower,followerCount}) {
+export default function View({mustVerifyEmail, status, auth, user, props,followers, isCurrentUserFollower, followerCount, publications, comments}) {
     let coverImageFile = null;
 
     const coverImageSrc = useRef('');
@@ -44,7 +46,10 @@ export default function View({mustVerifyEmail, status, auth, user, props, isCurr
 
     useEffect(() => {
         console.log(authUser);
-        console.log("My profile:", isMyProfile);
+        console.log("My Pubs:", publications);
+        console.log("My profile:", followers);
+        console.log("My profile:", comments);
+        console.log("Comments Pub:", comments.map((comment) => comment.content));
     }, [authUser, isMyProfile]);
 
     return (
@@ -69,36 +74,40 @@ export default function View({mustVerifyEmail, status, auth, user, props, isCurr
                     <h1>PROFILE {user.name}</h1>
                     <p>{user.name} tienes {followerCount} <small>followers...</small></p>
 
+                    {!isMyProfile && (
+                        isCurrentUserFollower ? (
+                            <DangerButton onClick={followUser} className="flex" variant="ghost">
+                                Unfollow
+                            </DangerButton>
+                        ) : (
+                            <PrimaryButton onClick={followUser} className="flex" variant="ghost">
+                                Follow
+                            </PrimaryButton>
+                        )
+                    )}
 
-                {isCurrentUserFollower && (
-                    <DangerButton onClick={followUser} className="flex" variant="ghost">
-                        Unfollow
-                    </DangerButton>
-                )}
-                {!isCurrentUserFollower && (
-                    <PrimaryButton onClick={followUser} className="flex" variant="ghost">
-                        Follow
-                    </PrimaryButton>
-                )}
-
-                {isMyProfile && (
-                    <PrimaryButton className="flex" variant="ghost">
-                        <FontAwesomeIcon icon={faPenToSquare}/>
-                        Edit Profile
-                    </PrimaryButton>
-                )}
+                    {isMyProfile && (
+                        <PrimaryButton className="flex" variant="ghost">
+                            <FontAwesomeIcon icon={faPenToSquare}/>
+                            Edit Profile
+                        </PrimaryButton>
+                    )}
+                </div>
+                <div className="max-w-2xl">
+                    <h2>POSTS</h2>
+                    <div>
+                        {publications.map((publication) => (
+                            <CardPub publication={publication} key={publication.id}/>
+                        ))}
+                    </div>
+                </div>
+                <div>
+                    <h2>Followers</h2>
+                </div>
+                <div>
+                    <h2>Followings</h2>
+                </div>
             </div>
-            <div>
-                <h2>POSTS</h2>
-            </div>
-            <div>
-                <h2>Followers</h2>
-            </div>
-            <div>
-                <h2>Followings</h2>
-            </div>
-        </div>
-</AuthenticatedLayout>
-);
-
+        </AuthenticatedLayout>
+    );
 }

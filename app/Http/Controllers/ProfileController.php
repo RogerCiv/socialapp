@@ -26,13 +26,31 @@ class ProfileController extends Controller
         }
 
         $followerCount = Follower::where('user_id', $user->id)->count();
+//        $publications = Publication::where('user_id', $user->id)->with('user:id,name,avatar')->latest()->get();
+//        $publications = Publication::postsForTimeline(Auth::id());
+        $publications = Publication::where('user_id', $user->id)
+            ->with([
+                'user:id,name,avatar',
+                'comments' => function($query) {
+                    $query->with('user:id,name,avatar'); // Cargar el usuario que hizo el comentario
+                },
+                'likes:id' // Cargar usuarios que dieron like a la publicación
+            ])
+            ->latest()
+            ->get();
         $followingCount = Follower::where('follower_id', $user->id)->count();
+        $followers = $user->followers()->get();
+        $comments = Publication::with('comments')->where('user_id',$user->id)->get();
         return Inertia::render('Profile/View', [
             'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => session('status'),
             'user' => new UserResource($user),
             'isCurrentUserFollower' => $isCurrentUserFollower,
             'followerCount' => $followerCount,
+            'followingCount' => $followingCount,
+            'publications' => $publications,
+            'followers' => $followers,
+            'comments' => $comments,
         ]);
     }
 

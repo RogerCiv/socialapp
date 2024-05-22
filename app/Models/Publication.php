@@ -31,6 +31,28 @@ class Publication extends Model
     {
         return $this->hasMany(Comment::class);
     }
+    public static function postsForTimeline($userId, $getLatest = true): Builder
+    {
+        $query = Publication::query() // SELECT * FROM posts
+        ->with([
+            'user',
+            'comments' => function ($query) {
+                $query->withCount('likes'); // SELECT * FROM comments WHERE post_id IN (1, 2, 3...)
+                // SELECT COUNT(*) from reactions
+            },
+            'comments.user',
+            'comments.likes' => function ($query) use ($userId) {
+                $query->where('user_id', $userId); // SELECT * from reactions WHERE user_id = ?
+            },
+            'likes' => function ($query) use ($userId) {
+                $query->where('user_id', $userId); // SELECT * from reactions WHERE user_id = ?
+            }]);
+        if ($getLatest) {
+            $query->latest();
+        }
+
+        return $query;
+    }
 
      // Relación con el modelo Publication
     public function publication()
@@ -41,14 +63,19 @@ class Publication extends Model
     {
         return $this->hasMany(LikePublication::class);
     }
-    
+
     public function isLikedByUser($userId)
     {
         return $this->likePublications()->where('user_id', $userId)->exists();
     }
 
+//    public function likes()
+//{
+//    return $this->hasMany(LikePublication::class);
+//}
     public function likes()
-{
-    return $this->hasMany(LikePublication::class);
-}
+    {
+        return $this->belongsToMany(User::class, 'like_publications')
+            ->withTimestamps(); // assuming you have a pivot table 'likes'
+    }
 }
