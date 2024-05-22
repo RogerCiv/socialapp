@@ -10,6 +10,7 @@ class Follower extends Model
     use HasFactory;
 
     protected $table = 'follower_user';
+    const UPDATED_AT = null;
     protected $fillable = ['user_id', 'follower_id'];
 
     public function user()

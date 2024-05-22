@@ -6,19 +6,30 @@ use App\Http\Controllers\Controller;
 use App\Models\Follower;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
 
-    public function follow(User $user)
+    public function follow(Request $request, User $user)
     {
-        $follower = auth()->user();
-        if ($follower->isFollowing($user)) {
-            return redirect()->back();
+        $data = $request->validate([
+            'follow' => ['boolean']
+        ]);
+        if ($data['follow'] === true) {
+            $message = 'You are now following ' . $user->name;
+            Follower::create([
+                'user_id' => $user->id,
+                'follower_id' => Auth::id(),
+            ]);
+        } else {
+            $message = 'You have unfollowed ' . $user->name;
+            Follower::query()->where('user_id', $user->id)
+                ->where('follower_id', Auth::id())
+                ->delete();
         }
-        $follower->follow($user);
 
-        return back()->with('success', 'You are now following ' . $user->name);
+        return back()->with('success', $message);
     }
 
     public function unfollow(User $user)
@@ -27,6 +38,7 @@ class UserController extends Controller
 
         return redirect()->back();
     }
+
     public function followedUsers()
     {
         $user = auth()->user();
