@@ -45,11 +45,11 @@ export default function View({mustVerifyEmail, status, auth, user, props,followe
     }
 
     useEffect(() => {
-        console.log(authUser);
-        console.log("My Pubs:", publications);
-        console.log("My profile:", followers);
-        console.log("My profile:", comments);
-        console.log("Comments Pub:", comments.map((comment) => comment.content));
+        // console.log(authUser);
+        // console.log("My Pubs:", publications);
+        // console.log("My profile:", followers);
+        // console.log("My profile:", comments);
+        // console.log("Comments Pub:", comments.map((comment) => comment.content));
     }, [authUser, isMyProfile]);
 
     return (
@@ -97,7 +97,7 @@ export default function View({mustVerifyEmail, status, auth, user, props,followe
                     <h2>POSTS</h2>
                     <div>
                         {publications.map((publication) => (
-                            <CardPub publication={publication} key={publication.id}/>
+                            <CardPub publication={publication} key={publication.id} user={user}/>
                         ))}
                     </div>
                 </div>

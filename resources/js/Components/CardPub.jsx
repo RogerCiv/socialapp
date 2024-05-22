@@ -1,19 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbsUp, faComment, faEye  } from "@fortawesome/free-solid-svg-icons";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useForm } from "@inertiajs/react";
+import {useForm, usePage} from "@inertiajs/react";
 import CreateComment from "@/Components/CreateComment.jsx";
 import CommentList from "@/Components/CommentList.jsx";
 
 dayjs.extend(relativeTime);
 
-export default function CardPub({ publication }) {
+export default function CardPub({ publication, user }) {
     const [liked, setLiked] = useState(false);
     const [showCommentForm, setShowCommentForm] = useState(false);
     const [showComments, setShowComments] = useState(false);
     const { post, reset } = useForm();
+    const { auth } = usePage().props;
+
+
+    useEffect(() => {
+        setLiked(publication.likes.some(like => like.id === auth.user.id));
+    }, [publication.likes,user.id]);
 
     const handleLike = (publicationId, e) => {
         e.preventDefault();
@@ -39,13 +45,15 @@ export default function CardPub({ publication }) {
     const toggleCommentForm = () => {
         setShowCommentForm(!showCommentForm);
     };
+
     const toggleComments = () => {
         setShowComments(!showComments);
-    }
+    };
+
     const handleSubmitComment = (e) => {
         e.preventDefault();
         console.log(comment);
-    }
+    };
 
     return (
         <div className="max-w-6xl bg-white border border-gray-200 rounded-lg shadow p-6 flex flex-col space-y-4">
