@@ -27,19 +27,37 @@ class PublicationController extends Controller
         if (!Auth::guest()) {
             $isCurrentUserFollower = Follower::where('user_id', $user->id)->where('follower_id', auth()->id())->exists();
         }
-
         $followerCount = Follower::where('user_id', $user->id)->count();
-//        $publications = Publication::where('user_id', $user->id)->with('user:id,name,avatar')->latest()->get();
-//        $publications = Publication::postsForTimeline(Auth::id());
         $publications = Publication::with([
-            'user:id,name,avatar', // Carga el usuario que publicó la publicación
+            'user:id,name,avatar',
             'comments' => function ($query) {
-                $query->with('user:id,name,avatar'); // Carga el usuario que comentó en cada comentario
-                $query->with('likes:id'); // Carga los likes asociados a cada comentario
+                $query->with('user:id,name,avatar');
+                $query->with('likes:id');
             },
-            'likes:id' // Carga los likes asociados a cada publicación
+            'likes:id',
         ])->latest()->get();
-//        dd($publications);
+
+        $publicationsForUser = Publication::query()
+            ->select('publications.*')
+            ->join('follower_user AS f', 'publications.user_id', '=', 'f.follower_id', )
+            ->join('comments', 'comments.user_id', '=', 'f.follower_id')
+
+//            ->where('f.user_id', $user->id)
+//            ->orWhere('publications.user_id', $user->id)
+            ->with([
+                'user:id,name,avatar',
+                'comments' => function ($query) {
+                    $query->with('user:id,name,avatar');
+                    $query->with('likes:id');
+                },
+                'likes:id',
+            ])
+            ->latest()
+            ->get();
+
+        dd($publicationsForUser);
+
+
         $followingCount = Follower::where('follower_id', $user->id)->count();
         $followers = $user->followers()->get();
         return Inertia::render('Publications/Index', [
@@ -51,6 +69,7 @@ class PublicationController extends Controller
             'followingCount' => $followingCount,
             'publications' => $publications,
             'followers' => $followers,
+            'publicationsForUser' => $publicationsForUser,
         ]);
     }
 

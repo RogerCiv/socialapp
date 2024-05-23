@@ -8,13 +8,16 @@ import { useForm, Head } from "@inertiajs/react";
 import Publication from "../../Components/Publication";
 import CardPub from "@/Components/CardPub.jsx";
 
-export default function Index({ auth, user, isCurrentUserFollower, followerCount, publications }) {
+export default function Index({ auth, user, isCurrentUserFollower, followerCount, publications,publicationsForUser }) {
     const fileInputRef = useRef(null);
     const { data, setData, post, processing, reset, errors } = useForm({
         content: "",
         image: "",
     });
 
+    useEffect(() => {
+        console.log(publicationsForUser);
+    }, []);
     const submit = (e) => {
         e.preventDefault();
         post(route("publications.store"), { onSuccess: () => reset() });

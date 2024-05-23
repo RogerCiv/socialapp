@@ -1,11 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect, useRef} from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faThumbsUp, faComment, faEye } from "@fortawesome/free-solid-svg-icons";
+import {faThumbsUp, faComment, faEye, faEllipsisV} from "@fortawesome/free-solid-svg-icons";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useForm, usePage } from "@inertiajs/react";
 import CreateComment from "@/Components/CreateComment.jsx";
 import CommentList from "@/Components/CommentList.jsx";
+import Dropdown from "@/Components/Dropdown.jsx";
+import InputError from "@/Components/InputError.jsx";
+import TextInput from "@/Components/TextInput.jsx";
+import PrimaryButton from "@/Components/PrimaryButton.jsx";
 
 dayjs.extend(relativeTime);
 
@@ -14,9 +18,16 @@ export default function CardPub({ publication, user }) {
     const [likedComments, setLikedComments] = useState({});
     const [showCommentForm, setShowCommentForm] = useState(false);
     const [showComments, setShowComments] = useState(false);
-    const { post, reset } = useForm();
-    const { auth } = usePage().props;
+    const [editing, setEditing] = useState(false);
+    const fileInputRef = useRef(null);
 
+    // const { post, reset } = useForm();
+    const { auth } = usePage().props;
+    const isAuthor = auth.user.id === publication.user.id;
+    const { data, setData, patch, clearErrors, reset, errors, post } = useForm({
+        content: publication.content,
+        image: publication.image,
+    });
     useEffect(() => {
         setLiked(publication.likes.some(like => like.id === auth.user.id));
         const initialLikedComments = {};
@@ -78,6 +89,22 @@ export default function CardPub({ publication, user }) {
         setShowComments(!showComments);
     };
 
+    const submit = (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append("content", data.content);
+        if (data.image) {
+            formData.append("image", data.image);
+        }
+        post(route("publications.update", publication.id), {
+            method: "patch",
+            onSuccess: () => {
+                setEditing(false);
+            },
+            preserveScroll: true,
+        });
+    };
+
     return (
         <div className="max-w-6xl bg-white border border-gray-200 rounded-lg shadow p-6 flex flex-col space-y-4">
             <div className="flex justify-between items-center">
@@ -89,21 +116,52 @@ export default function CardPub({ publication, user }) {
                         <small className="ml-2 text-sm text-gray-600">{dayjs(publication.created_at).fromNow()}</small>
                     </div>
                 </div>
+                {isAuthor && (
+                    <Dropdown>
+                        <Dropdown.Trigger>
+                            <button className="text-gray-500">
+                                <FontAwesomeIcon icon={faEllipsisV} />
+                            </button>
+                        </Dropdown.Trigger>
+                        <Dropdown.Content>
+                            <button className="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:bg-gray-100 transition duration-150 ease-in-out" onClick={() => setEditing(true)}>
+                                Edit
+                            </button>
+                            <Dropdown.Link as="button" href={route("publications.destroy", publication.id)} method="delete">
+                                Delete
+                            </Dropdown.Link>
+                        </Dropdown.Content>
+                    </Dropdown>
+                )}
             </div>
 
-            {publication.image && (
-                <img className="rounded-lg object-cover"
-                     src={publication.image.startsWith("http") ? publication.image : `/storage/${publication.image}`}
-                     alt="Publication Image"/>
+            {editing ? (
+                <form onSubmit={submit}>
+                    <textarea value={data.content} onChange={(e) => setData("content", e.target.value)} className="mt-4 w-full text-gray-900 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"></textarea>
+                    <InputError content={errors.content} className="mt-2" />
+                    <TextInput label='Imagen' type='file' name='image' id='image' ref={fileInputRef}
+                               onChange={(e) => setData('image', e.target.files[0])} />
+                    <div className="space-x-2 mt-4">
+                        <PrimaryButton>Save</PrimaryButton>
+                        <button onClick={() => { setEditing(false); reset(); clearErrors(); }}>Cancel</button>
+                    </div>
+                </form>
+            ) : (
+                <>
+                    {publication.image && (
+                        <img className="rounded-lg object-cover"
+                             src={publication.image.startsWith("http") ? publication.image : `/storage/${publication.image}`}
+                             alt="Publication Image"/>
+                    )}
+                    <p className="mt-4 text-gray-900">{publication.content}</p>
+                </>
             )}
 
-            <p className="mt-4 text-gray-900">{publication.content}</p>
-
-            <div className="flex justify-between items-center mt-4">
+             <div className="flex justify-between items-center mt-4">
                 <button className="flex"
                         onClick={(e) => liked ? handleUnlike(publication.id, e) : handleLike(publication.id, e)}>
                     <FontAwesomeIcon icon={faThumbsUp} className="mr-2"/>
-                    {liked ? 'Unlike' : 'Like'}
+                    {liked ? 'Unlike' : 'Like'} {publication.likes.length}
                 </button>
 
                 <button className="flex" onClick={toggleCommentForm}>

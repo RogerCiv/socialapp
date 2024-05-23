@@ -31,22 +31,20 @@ class Publication extends Model
     {
         return $this->hasMany(Comment::class);
     }
+
     public static function postsForTimeline($userId, $getLatest = true): Builder
     {
-        $query = Publication::query() // SELECT * FROM posts
-        ->with([
-            'user',
-            'comments' => function ($query) {
-                $query->withCount('likes'); // SELECT * FROM comments WHERE post_id IN (1, 2, 3...)
-                // SELECT COUNT(*) from reactions
-            },
-            'comments.user',
-            'comments.likes' => function ($query) use ($userId) {
-                $query->where('user_id', $userId); // SELECT * from reactions WHERE user_id = ?
-            },
-            'likes' => function ($query) use ($userId) {
-                $query->where('user_id', $userId); // SELECT * from reactions WHERE user_id = ?
-            }]);
+        $query = Publication::query()
+            ->withCount('likes')
+            ->with([
+                'user:id,name,avatar',
+                'comments' => function ($query) {
+                    $query->with('user:id,name,avatar');
+                    $query->with('likes:id');
+                },
+                'likes:id',
+            ]);
+
         if ($getLatest) {
             $query->latest();
         }
@@ -54,11 +52,14 @@ class Publication extends Model
         return $query;
     }
 
-     // Relación con el modelo Publication
+
+
+    // Relación con el modelo Publication
     public function publication()
     {
         return $this->belongsTo(Publication::class);
     }
+
     public function likePublications()
     {
         return $this->hasMany(LikePublication::class);

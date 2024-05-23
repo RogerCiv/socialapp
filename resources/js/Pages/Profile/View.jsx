@@ -3,10 +3,11 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import PrimaryButton from "@/Components/PrimaryButton";
 import {faPenToSquare} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {useForm} from "@inertiajs/react";
+import {Link, useForm} from "@inertiajs/react";
 import DangerButton from "@/Components/DangerButton.jsx";
 import Publication from "@/Components/Publication.jsx";
 import CardPub from "@/Components/CardPub.jsx";
+import TextInput from "@/Components/TextInput.jsx";
 
 export default function View({mustVerifyEmail, status, auth, user, isCurrentUserFollower, followerCount, publications, followers,followings}) {
     let coverImageFile = null;
@@ -18,6 +19,9 @@ export default function View({mustVerifyEmail, status, auth, user, isCurrentUser
         avatar: null,
         cover: null,
     });
+
+    const searchFollowers = useRef()
+    const searchFollowings = useRef()
 
     const followUserForm = useForm({
         follow: !isCurrentUserFollower
@@ -97,11 +101,17 @@ export default function View({mustVerifyEmail, status, auth, user, isCurrentUser
                 </div>
                 <div>
                     <h2>Followers</h2>
+                    <TextInput label="Search" placeholder={'Search Followers'} type="text" name="searchFollower" id="searchFollower"/>
+                    {
+                        followers.length === 0 && <p>No followers yet...</p>
+                    }
                     {followers.map((follower) => (
                         <div key={follower.id} className="flex items-center space-x-4">
                             <img className="w-[50px] h-[50px] rounded-full"
                                  src={follower.avatar || 'default_avatar_url'} alt=""/>
-                            <h3>{follower.name}</h3>
+                            <Link href={route('profile', { name: follower.name })}>
+                                <h3>{follower.name}</h3>
+                            </Link>
                         </div>
                     ))}
 
@@ -109,11 +119,17 @@ export default function View({mustVerifyEmail, status, auth, user, isCurrentUser
                 </div>
                 <div>
                     <h2>Followings</h2>
+                    <TextInput label="Search" placeholder={'Search Followings'} type="text" name="searchFollowings" id="searchFollowings"/>
+                    {
+                        followings.length === 0 && <p>No followings yet...</p>
+                    }
                     {followings.map((following) => (
                         <div key={following.id} className="flex items-center space-x-4">
                             <img className="w-[50px] h-[50px] rounded-full"
                                  src={following.avatar || 'default_avatar_url'} alt=""/>
-                            <h3>{following.name}</h3>
+                            <Link href={route('profile', { name: following.name })}>
+                                <h3>{following.name}</h3>
+                            </Link>
                         </div>
                     ))}
                 </div>
