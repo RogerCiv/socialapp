@@ -41,7 +41,19 @@ class ProfileController extends Controller
             ->get();
 
         $followingCount = Follower::where('follower_id', $user->id)->count();
-        $followers = $user->followers()->get();
+
+        $followers = User::query()
+            ->select('users.*')
+            ->join('follower_user AS f', 'f.user_id', '=', 'users.id') // Corregir la condición de unión
+            ->where('f.follower_id', $user->id) // Filtrar por el id del usuario seguido
+            ->get();
+
+        $followings = User::query()
+            ->select('users.*')
+            ->join('follower_user AS f', 'f.follower_id', '=', 'users.id') // Corregir la condición de unión
+            ->where('f.user_id', $user->id) // Filtrar por el id del usuario seguido
+            ->get();
+
         $comments = Publication::with('comments')->where('user_id',$user->id)->get();
         return Inertia::render('Profile/View', [
             'mustVerifyEmail' => $user instanceof MustVerifyEmail,
@@ -51,7 +63,8 @@ class ProfileController extends Controller
             'followerCount' => $followerCount,
             'followingCount' => $followingCount,
             'publications' => $publications,
-            'followers' => $followers,
+            'followers' => UserResource::collection($followers),
+            'followings' => UserResource::collection($followings),
             'comments' => $comments,
         ]);
     }

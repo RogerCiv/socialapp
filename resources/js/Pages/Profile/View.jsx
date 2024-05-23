@@ -8,7 +8,7 @@ import DangerButton from "@/Components/DangerButton.jsx";
 import Publication from "@/Components/Publication.jsx";
 import CardPub from "@/Components/CardPub.jsx";
 
-export default function View({mustVerifyEmail, status, auth, user, isCurrentUserFollower, followerCount, publications}) {
+export default function View({mustVerifyEmail, status, auth, user, isCurrentUserFollower, followerCount, publications, followers,followings}) {
     let coverImageFile = null;
 
     const coverImageSrc = useRef('');
@@ -44,13 +44,7 @@ export default function View({mustVerifyEmail, status, auth, user, isCurrentUser
         });
     }
 
-    useEffect(() => {
-        // console.log(authUser);
-        // console.log("My Pubs:", publications);
-        // console.log("My profile:", followers);
-        // console.log("My profile:", comments);
-        // console.log("Comments Pub:", comments.map((comment) => comment.content));
-    }, [authUser, isMyProfile]);
+
 
     return (
         <AuthenticatedLayout user={auth.user}>
@@ -103,9 +97,25 @@ export default function View({mustVerifyEmail, status, auth, user, isCurrentUser
                 </div>
                 <div>
                     <h2>Followers</h2>
+                    {followers.map((follower) => (
+                        <div key={follower.id} className="flex items-center space-x-4">
+                            <img className="w-[50px] h-[50px] rounded-full"
+                                 src={follower.avatar || 'default_avatar_url'} alt=""/>
+                            <h3>{follower.name}</h3>
+                        </div>
+                    ))}
+
+
                 </div>
                 <div>
                     <h2>Followings</h2>
+                    {followings.map((following) => (
+                        <div key={following.id} className="flex items-center space-x-4">
+                            <img className="w-[50px] h-[50px] rounded-full"
+                                 src={following.avatar || 'default_avatar_url'} alt=""/>
+                            <h3>{following.name}</h3>
+                        </div>
+                    ))}
                 </div>
             </div>
         </AuthenticatedLayout>

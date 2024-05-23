@@ -24,10 +24,6 @@ export default function Index({ auth, user, isCurrentUserFollower, followerCount
           });
     };
 
-    useEffect(() => {
-        console.log("My Pubs:", publications);
-    }, [publications]);
-
     return (
         <AuthenticatedLayout user={auth.user}>
             <Head title="Publication" />
