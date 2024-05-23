@@ -41,6 +41,7 @@ const CommentList = ({ comments, likedComments, handleLikeComment, handleUnlikeC
         <div className="mt-4">
             {comments.map(comment => {
                 const isAuthor = auth.user.id === comment.user.id;
+                const isLiked = likedComments[comment.id];
 
                 return (
                     <div key={comment.id} className="border-t border-gray-200 pt-4 flex items-start space-x-4">
@@ -88,9 +89,12 @@ const CommentList = ({ comments, likedComments, handleLikeComment, handleUnlikeC
                             )}
 
                             <div className="mt-2">
-                                <button className="flex items-center" onClick={(e) => likedComments[comment.id] ? handleUnlikeComment(comment.id, e) : handleLikeComment(comment.id, e)}>
+                                <button
+                                    className="flex items-center"
+                                    onClick={(e) => isLiked ? handleUnlikeComment(comment.id, e) : handleLikeComment(comment.id, e)}
+                                >
                                     <FontAwesomeIcon icon={faThumbsUp} className="mr-2" />
-                                    {likedComments[comment.id] ? 'Unlike' : 'Like'} {comment.likes.length}
+                                    {isLiked ? 'Unlike' : 'Like'} {comment.likes.length}
                                 </button>
                             </div>
                         </div>

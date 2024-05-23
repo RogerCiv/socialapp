@@ -25,22 +25,28 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/u/{user:name}',[ProfileController::class, 'index'])->middleware(['auth', 'verified'])->name('profile');
+Route::get('/u/{user:name}', [ProfileController::class, 'index'])->middleware(['auth', 'verified'])->name('profile');
 
 Route::middleware('auth')->group(function () {
 
     // Route::resource('/info', ProfileController::class);
 
 
-
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    Route::group(['namespace' => 'Publication'], function () {
+        Route::get('/publications', [PublicationController::class, 'index'])->name('publications.index');
+        Route::post('/publications', [PublicationController::class, 'store'])->name('publications.store');
+        Route::get('/publications/{publication}', [PublicationController::class, 'show'])->name('publications.show');
 
-    Route::post('/publications/{publication}/like', [LikePublicationController::class, 'like'])->name('publications.like');
-    Route::post('/publications/{publication}/unlike', [LikePublicationController::class, 'unlike'])->name('publications.unlike');
-    Route::get('/publications/{publication}/likes', [LikePublicationController::class, 'getLikes'])->name('publications.likes');
+        Route::post('/publications/{publication}', [PublicationController::class, 'update'])->name('publications.update');
+        Route::delete('/publications/{publication}', [PublicationController::class, 'destroy'])->name('publications.destroy');
+        Route::post('/publications/{publication}/like', [LikePublicationController::class, 'like'])->name('publications.like');
+        Route::post('/publications/{publication}/unlike', [LikePublicationController::class, 'unlike'])->name('publications.unlike');
+        Route::get('/publications/{publication}/likes', [LikePublicationController::class, 'getLikes'])->name('publications.likes');
+    });
 
 
     Route::post('/user/follow/{user}', [UserController::class, 'follow'])->name('user.follow');
@@ -49,12 +55,7 @@ Route::middleware('auth')->group(function () {
 
 
     // Route::resource('/publications', PublicationController::class);
-    Route::get('/publications', [PublicationController::class, 'index'])->name('publications.index');
-    Route::post('/publications', [PublicationController::class, 'store'])->name('publications.store');
-    Route::get('/publications/{publication}', [PublicationController::class, 'show'])->name('publications.show');
 
-    Route::post('/publications/{publication}', [PublicationController::class, 'update'])->name('publications.update');
-    Route::delete('/publications/{publication}', [PublicationController::class, 'destroy'])->name('publications.destroy');
 
     // Route::resource('/comments', CommentController::class);
     Route::get('/comments', [CommentController::class, 'getComments'])->name('comments.index');
@@ -75,4 +76,4 @@ Route::middleware('auth')->group(function () {
 
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

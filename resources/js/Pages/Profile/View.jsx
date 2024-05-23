@@ -8,7 +8,7 @@ import DangerButton from "@/Components/DangerButton.jsx";
 import Publication from "@/Components/Publication.jsx";
 import CardPub from "@/Components/CardPub.jsx";
 
-export default function View({mustVerifyEmail, status, auth, user, props,followers, isCurrentUserFollower, followerCount, publications, comments}) {
+export default function View({mustVerifyEmail, status, auth, user, isCurrentUserFollower, followerCount, publications}) {
     let coverImageFile = null;
 
     const coverImageSrc = useRef('');

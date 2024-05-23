@@ -4,10 +4,14 @@ namespace App\Http\Controllers\Publication;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PublicationResource;
+use App\Http\Resources\UserResource;
 use App\Models\Follower;
 use App\Models\LikeComment;
 use App\Models\LikePublication;
 use App\Models\Publication;
+use App\Models\User;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -17,37 +21,69 @@ use Inertia\Inertia;
 
 class PublicationController extends Controller
 {
+    public function index(User $user)
+    {
+        $isCurrentUserFollower = false;
+        if (!Auth::guest()) {
+            $isCurrentUserFollower = Follower::where('user_id', $user->id)->where('follower_id', auth()->id())->exists();
+        }
 
-  public function index()
-  {
-    $user = auth()->user();
+        $followerCount = Follower::where('user_id', $user->id)->count();
+//        $publications = Publication::where('user_id', $user->id)->with('user:id,name,avatar')->latest()->get();
+//        $publications = Publication::postsForTimeline(Auth::id());
+        $publications = Publication::with([
+            'user:id,name,avatar', // Carga el usuario que publicó la publicación
+            'comments' => function ($query) {
+                $query->with('user:id,name,avatar'); // Carga el usuario que comentó en cada comentario
+                $query->with('likes:id'); // Carga los likes asociados a cada comentario
+            },
+            'likes:id' // Carga los likes asociados a cada publicación
+        ])->latest()->get();
+//        dd($publications);
+        $followingCount = Follower::where('follower_id', $user->id)->count();
+        $followers = $user->followers()->get();
+        return Inertia::render('Publications/Index', [
+            'mustVerifyEmail' => $user instanceof MustVerifyEmail,
+            'status' => session('status'),
+            'user' => new UserResource($user),
+            'isCurrentUserFollower' => $isCurrentUserFollower,
+            'followerCount' => $followerCount,
+            'followingCount' => $followingCount,
+            'publications' => $publications,
+            'followers' => $followers,
+        ]);
+    }
 
- 
-    $likePublications = LikePublication::where('like_publications.user_id', $user->id)
-      ->join('publications', 'publications.id', '=', 'like_publications.publication_id')
-      ->pluck('publications.id')
-      ->toArray();
-    $followers = Follower::where('user_id', $user->id)->get();
+//  public function index()
+//  {
+//    $user = auth()->user();
+//
+//
+//    $likePublications = LikePublication::where('like_publications.user_id', $user->id)
+//      ->join('publications', 'publications.id', '=', 'like_publications.publication_id')
+//      ->pluck('publications.id')
+//      ->toArray();
+//    $followers = Follower::where('user_id', $user->id)->get();
+//
+//    $publications = Publication::with([
+//      'user:id,name,avatar',
+//      'comments.user:id,name,avatar'
+//  ])->latest()->get();
+//  $likeComments = LikeComment::where('like_comments.user_id', $user->id)
+//  ->join('comments', 'comments.id', '=', 'like_comments.comment_id')
+//  ->pluck('comments.id')
+//  ->toArray();
+//  // dd($likeComments);
+//    // dd($publications);
+//    return Inertia::render('Publications/Index', [
+//      // 'publications' => Publication::with('user:id,name')->latest()->get(),
+//      'publications' => $publications,
+//      'likePublications' => $likePublications,
+//      'followers' => $followers,
+//      'likeComments' => $likeComments,
+//    ]);
+//  }
 
-    $publications = Publication::with([
-      'user:id,name,avatar',
-      'comments.user:id,name,avatar'
-  ])->latest()->get();
-  $likeComments = LikeComment::where('like_comments.user_id', $user->id)
-  ->join('comments', 'comments.id', '=', 'like_comments.comment_id')
-  ->pluck('comments.id')
-  ->toArray();
-  // dd($likeComments);
-    // dd($publications);
-    return Inertia::render('Publications/Index', [
-      // 'publications' => Publication::with('user:id,name')->latest()->get(),
-      'publications' => $publications,
-      'likePublications' => $likePublications,
-      'followers' => $followers,
-      'likeComments' => $likeComments,
-    ]);
-  }
-   
 
   public function store(Request $request): RedirectResponse
   {
@@ -75,29 +111,29 @@ class PublicationController extends Controller
   ]);
   }
 
-  public function getMyPublications()
-  {
-    $user = auth()->user();
-    $publicationsByUser = Publication::where('user_id', $user->id)->get();
-    $followers = Follower::where('user_id', $user->id)
-      ->join('users', 'follower_user.follower_id', '=', 'users.id')
-      ->select('follower_user.*', 'users.name as follower_name', 'users.avatar as follower_avatar')
-      ->get();
-    $top3Pub = Publication::select('user_id', DB::raw('count(*) as publications_count'))
-      ->groupBy('user_id')
-      ->orderByDesc('publications_count')
-      ->with('user:id,name,avatar') // Para obtener los detalles del usuario
-      ->take(3) // Puedes ajustar el número según lo necesites
-      ->get();
-    // dd($publicationsByUser);
-    // dd($followers);
-    // dd($top3Pub);
-    return Inertia::render('Info/Index', [
-      'publicationsByUser' =>  $publicationsByUser,
-      'followers' => $followers,
-      'top3Pub' => $top3Pub,
-    ]);
-  }
+    public function getMyPublications()
+    {
+        $user = auth()->user();
+        $publicationsByUser = Publication::where('user_id', $user->id)->get();
+        $followers = Follower::where('user_id', $user->id)
+            ->join('users', 'follower_user.follower_id', '=', 'users.id')
+            ->select('follower_user.*', 'users.name as follower_name', 'users.avatar as follower_avatar')
+            ->get();
+        $top3Pub = Publication::select('user_id', DB::raw('count(*) as publications_count'))
+            ->groupBy('user_id')
+            ->orderByDesc('publications_count')
+            ->with('user:id,name,avatar') // Para obtener los detalles del usuario
+            ->take(3) // Puedes ajustar el número según lo necesites
+            ->get();
+        // dd($publicationsByUser);
+        // dd($followers);
+        // dd($top3Pub);
+        return Inertia::render('Info/Index', [
+            'publicationsByUser' =>  $publicationsByUser,
+            'followers' => $followers,
+            'top3Pub' => $top3Pub,
+        ]);
+    }
 
   public function update(Request $request, Publication $publication): RedirectResponse
   {

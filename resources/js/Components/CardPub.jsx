@@ -85,6 +85,7 @@ export default function CardPub({ publication, user }) {
                     <img className="rounded-full w-12 h-12" src={publication.user.avatar} alt={publication.user.name} />
                     <div>
                         <h5 className="text-sm font-bold">{publication.user.name}</h5>
+
                         <small className="ml-2 text-sm text-gray-600">{dayjs(publication.created_at).fromNow()}</small>
                     </div>
                 </div>

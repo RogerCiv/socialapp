@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, {useEffect, useRef} from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import InputError from "@/Components/InputError";
 import PrimaryButton from "@/Components/PrimaryButton";
@@ -6,8 +6,9 @@ import TextInput from "@/Components/TextInput";
 
 import { useForm, Head } from "@inertiajs/react";
 import Publication from "../../Components/Publication";
+import CardPub from "@/Components/CardPub.jsx";
 
-export default function Index({ auth, publications,followers }) {
+export default function Index({ auth, user, isCurrentUserFollower, followerCount, publications }) {
     const fileInputRef = useRef(null);
     const { data, setData, post, processing, reset, errors } = useForm({
         content: "",
@@ -22,6 +23,10 @@ export default function Index({ auth, publications,followers }) {
             image: '',
           });
     };
+
+    useEffect(() => {
+        console.log("My Pubs:", publications);
+    }, [publications]);
 
     return (
         <AuthenticatedLayout user={auth.user}>
@@ -45,11 +50,7 @@ export default function Index({ auth, publications,followers }) {
                 </form>
                 <div className="mt-6 bg-white shadow-sm rounded-lg divide-y">
                     {publications.map((publication) => (
-                        <Publication
-                            key={publication.id}
-                            publication={publication}
-                            followers={followers}
-                        />
+                        <CardPub publication={publication} key={publication.id} user={user}/>
                     ))}
                 </div>
             </div>

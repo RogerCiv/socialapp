@@ -39,7 +39,7 @@ export default function Publication({ publication, followers }) {
 
     setLiked(isLiked);
     setFollowed(isFollow);
-   
+
 
     const initialLikedComments = publication.comments.reduce((acc, comment) => {
       acc[comment.id] = likeComments.includes(comment.id);
