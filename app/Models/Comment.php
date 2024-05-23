@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Comment extends Model
 {
     use HasFactory;
-    
+
     // protected $fillable = [
     //     'publication_id',
     //     'user_id',
@@ -34,13 +34,19 @@ class Comment extends Model
     {
         return $this->belongsTo(User::class);
     }
-    
-    public function likes(): HasMany
+
+//    public function likes(): HasMany
+//    {
+//        return $this->hasMany(LikeComment::class);
+//    }
+
+    public function likes()
     {
-        return $this->hasMany(LikeComment::class);
+        return $this->belongsToMany(User::class, 'like_comments')
+            ->withTimestamps(); // assuming you have a pivot table 'likes'
     }
 
-    
 
-    
+
+
 }

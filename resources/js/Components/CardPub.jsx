@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faThumbsUp, faComment, faEye  } from "@fortawesome/free-solid-svg-icons";
+import { faThumbsUp, faComment, faEye } from "@fortawesome/free-solid-svg-icons";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import {useForm, usePage} from "@inertiajs/react";
+import { useForm, usePage } from "@inertiajs/react";
 import CreateComment from "@/Components/CreateComment.jsx";
 import CommentList from "@/Components/CommentList.jsx";
 
@@ -11,15 +11,20 @@ dayjs.extend(relativeTime);
 
 export default function CardPub({ publication, user }) {
     const [liked, setLiked] = useState(false);
+    const [likedComments, setLikedComments] = useState({});
     const [showCommentForm, setShowCommentForm] = useState(false);
     const [showComments, setShowComments] = useState(false);
     const { post, reset } = useForm();
     const { auth } = usePage().props;
 
-
     useEffect(() => {
         setLiked(publication.likes.some(like => like.id === auth.user.id));
-    }, [publication.likes,user.id]);
+        const initialLikedComments = {};
+        publication.comments.forEach(comment => {
+            initialLikedComments[comment.id] = comment.likes.some(like => like.user_id === auth.user.id);
+        });
+        setLikedComments(initialLikedComments);
+    }, [publication.likes, publication.comments, auth.user.id]);
 
     const handleLike = (publicationId, e) => {
         e.preventDefault();
@@ -33,9 +38,32 @@ export default function CardPub({ publication, user }) {
     };
 
     const handleUnlike = (publicationId, e) => {
+        e.preventDefault();
         post(route("publications.unlike", publicationId), {
             onSuccess: () => {
                 setLiked(false);
+                reset();
+            },
+            preserveScroll: true,
+        });
+    };
+
+    const handleLikeComment = (commentId, e) => {
+        e.preventDefault();
+        post(route("comments.like", commentId), {
+            onSuccess: () => {
+                setLikedComments(prev => ({ ...prev, [commentId]: true }));
+                reset();
+            },
+            preserveScroll: true,
+        });
+    };
+
+    const handleUnlikeComment = (commentId, e) => {
+        e.preventDefault();
+        post(route("comments.unlike", commentId), {
+            onSuccess: () => {
+                setLikedComments(prev => ({ ...prev, [commentId]: false }));
                 reset();
             },
             preserveScroll: true,
@@ -48,11 +76,6 @@ export default function CardPub({ publication, user }) {
 
     const toggleComments = () => {
         setShowComments(!showComments);
-    };
-
-    const handleSubmitComment = (e) => {
-        e.preventDefault();
-        console.log(comment);
     };
 
     return (
@@ -94,10 +117,15 @@ export default function CardPub({ publication, user }) {
             </div>
 
             {showCommentForm && (
-                <CreateComment publication={publication} setShowCommentForm={setShowCommentForm}/>
+                <CreateComment publication={publication} setShowCommentForm={setShowCommentForm} />
             )}
             {showComments && (
-                <CommentList comments={publication.comments} likedComments={likedComments} handleLikeComment={handleLikeComment} handleUnlikeComment={handleUnlikeComment} />
+                <CommentList
+                    comments={publication.comments}
+                    likedComments={likedComments}
+                    handleLikeComment={handleLikeComment}
+                    handleUnlikeComment={handleUnlikeComment}
+                />
             )}
         </div>
     );

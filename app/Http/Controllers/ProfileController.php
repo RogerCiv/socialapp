@@ -33,11 +33,13 @@ class ProfileController extends Controller
                 'user:id,name,avatar',
                 'comments' => function($query) {
                     $query->with('user:id,name,avatar');
+                    $query->with('likes:id');
                 },
                 'likes:id'
             ])
             ->latest()
             ->get();
+
         $followingCount = Follower::where('follower_id', $user->id)->count();
         $followers = $user->followers()->get();
         $comments = Publication::with('comments')->where('user_id',$user->id)->get();
