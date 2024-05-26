@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbsUp, faComment, faEye, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useForm, usePage } from "@inertiajs/react";
+import {Link, useForm, usePage} from "@inertiajs/react";
 import CreateComment from "@/Components/CreateComment.jsx";
 import CommentList from "@/Components/CommentList.jsx";
 import Dropdown from "@/Components/Dropdown.jsx";
@@ -116,13 +116,17 @@ export default function CardPub({ publication, user }) {
     return (
         <div className="max-w-6xl bg-white border border-gray-200 rounded-lg shadow p-6 flex flex-col space-y-4">
             <div className="flex justify-between items-center">
+                    <Link href={route('profile', {name: publication.user.name})}>
                 <div className="flex items-center space-x-4">
+
                     <img className="rounded-full w-12 h-12" src={publication.user.avatar ? `/storage/${publication.user.avatar}` : '/img/avatar_default.jpg'} alt={publication.user.name} />
                     <div>
                         <h5 className="text-sm font-bold">{publication.user.name}</h5>
                         <small className="ml-2 text-sm text-gray-600">{dayjs(publication.created_at).fromNow()}</small>
                     </div>
+
                 </div>
+                    </Link>
                 {isAuthor && (
                     <Dropdown>
                         <Dropdown.Trigger>

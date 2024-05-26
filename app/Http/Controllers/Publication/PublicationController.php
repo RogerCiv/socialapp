@@ -38,13 +38,33 @@ class PublicationController extends Controller
             'likes:id',
         ])->latest()->get();
 
+//        $publicationsForUser = Publication::query()
+//            ->select('publications.*')
+//            ->join('follower_user AS f', 'publications.user_id', '=', 'f.follower_id', )
+//            ->join('comments', 'comments.user_id', '=', 'f.follower_id')
+//
+////            ->where('f.user_id', $user->id)
+////            ->orWhere('publications.user_id', $user->id)
+//            ->with([
+//                'user:id,name,avatar',
+//                'comments' => function ($query) {
+//                    $query->with('user:id,name,avatar');
+//                    $query->with('likes:id');
+//                },
+//                'likes:id',
+//            ])
+//            ->latest()
+//            ->distinct()
+//            ->get();
         $publicationsForUser = Publication::query()
             ->select('publications.*')
-            ->join('follower_user AS f', 'publications.user_id', '=', 'f.follower_id', )
-            ->join('comments', 'comments.user_id', '=', 'f.follower_id')
-
-//            ->where('f.user_id', $user->id)
-//            ->orWhere('publications.user_id', $user->id)
+            ->leftJoin('follower_user AS f1', 'publications.user_id', '=', 'f1.follower_id')
+            ->leftJoin('follower_user AS f2', 'publications.user_id', '=', 'f2.user_id')
+            ->join('comments', 'comments.user_id', '=', 'publications.user_id')
+            ->where(function ($query) use ($user) {
+                $query->where('f1.user_id', $user->id) // Publicaciones de los usuarios que sigues
+                ->orWhere('f2.follower_id', $user->id); // Publicaciones de los usuarios que te siguen
+            })
             ->with([
                 'user:id,name,avatar',
                 'comments' => function ($query) {
@@ -56,6 +76,9 @@ class PublicationController extends Controller
             ->latest()
             ->distinct()
             ->get();
+
+
+//    dd($publicationsForUser);
         $top3Pub = Publication::select('user_id', DB::raw('count(*) as publications_count'))
             ->groupBy('user_id')
             ->orderByDesc('publications_count')

@@ -4,7 +4,7 @@ import InputError from "@/Components/InputError";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 
-import { useForm, Head } from "@inertiajs/react";
+import {useForm, Head, Link} from "@inertiajs/react";
 import Publication from "../../Components/Publication";
 import CardPub from "@/Components/CardPub.jsx";
 import Box from "@mui/material/Box";
@@ -90,16 +90,16 @@ export default function Index({ auth, user, publications,publicationsForUser,top
                 </TabPanel>
                 <TabPanel value={value} index={2}>
                     <div className="col-span-4">
-                        <h2 className="text-2xl font-bold mb-4">Top 3 Usuarios con Más Publicaciones</h2>
+                        <h2 className="text-2xl text-center font-bold mb-4">Top 3 Usuarios con Más Publicaciones</h2>
                         <div className="grid grid-cols-3 gap-4">
                             {top3Pub.map((user, index) => (
                                 <div key={user.user_id}
-                                     className={`relative rounded-lg overflow-hidden ${index === 0 ? 'bg-gold' : index === 1 ? 'bg-silver' : 'bg-bronze'}`}>
+                                     className={`relative rounded-lg bg-slate-200 overflow-hidden ${index === 0 ? 'bg-gold' : index === 1 ? 'bg-silver' : 'bg-bronze'}`}>
                                     <div className="p-4">
                                         <div className="relative">
                                             <img
                                                 className="rounded-full w-24 h-24 mx-auto"
-                                                src={user.user.avatar}
+                                                src={user.user.avatar ? `/storage/${user.user.avatar}` : '/img/avatar_default.jpg'}
                                                 alt=""
                                             />
                                             <FontAwesomeIcon
@@ -114,7 +114,7 @@ export default function Index({ auth, user, publications,publicationsForUser,top
                                 </div>
                             ))}
                         </div>
-                        <h2 className="text-2xl font-bold mt-8 mb-4">Top 3 Usuarios con Más Comentarios</h2>
+                        <h2 className="text-2xl text-center font-bold mt-8 mb-4">Top 3 Usuarios con Más Comentarios</h2>
                         <div className="grid grid-cols-3 gap-4">
                             {top3Comments.map((comment, index) => (
                                 <div key={comment.user_id}
@@ -123,7 +123,7 @@ export default function Index({ auth, user, publications,publicationsForUser,top
                                         <div className="relative">
                                             <img
                                                 className="rounded-full w-24 h-24 mx-auto"
-                                                src={comment.user.avatar}
+                                                src={comment.user.avatar ? `/storage/${comment.user.avatar}` : '/img/avatar_default.jpg'}
                                                 alt=""
                                             />
                                             <FontAwesomeIcon
@@ -147,23 +147,26 @@ export default function Index({ auth, user, publications,publicationsForUser,top
                                          className={`relative rounded-lg overflow-hidden ${index === 0 ? 'bg-gold' : index === 1 ? 'bg-silver' : 'bg-bronze'}`}>
                                         <div className="p-4">
                                             <div className="relative">
-                                                <img
-                                                    className="rounded-full w-24 h-24 mx-auto"
-                                                    src={likedPublication.publication.user.avatar}
-                                                    alt=""
-                                                />
+                                                {likedPublication.publication.user && likedPublication.publication.user.avatar && (
+                                                    <img
+                                                        className="rounded-full w-24 h-24 mx-auto"
+                                                        src={likedPublication.publication.user.avatar ? `/storage/${likedPublication.publication.user.avatar}` : '/img/avatar_default.jpg'}
+                                                        alt=""
+                                                    />
+                                                )}
                                                 <FontAwesomeIcon
                                                     icon={faCrown}
                                                     className={`absolute -top-2 right-0 h-8 w-8 ${crownColors[index]}`}
                                                     title={`Crown ${index + 1}`}
                                                 />
                                             </div>
-                                            <h5 className="text-lg font-bold mt-2 text-center">{likedPublication.publication.user.name}</h5>
+                                            <h5 className="text-lg font-bold mt-2 text-center">{likedPublication.publication.user ? likedPublication.publication.user.name : 'Unknown'}</h5>
                                             <p className="text-gray-700 text-center">Publicación #{index + 1}</p>
                                             <p className="text-gray-700 text-center">Likes: {likedPublication.likes_count}</p>
                                         </div>
                                     </div>
                                 ))}
+
                             </div>
                         </div>
                     </div>
