@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Publication;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PublicationResource;
 use App\Http\Resources\UserResource;
+use App\Models\Comment;
 use App\Models\Follower;
 use App\Models\LikeComment;
 use App\Models\LikePublication;
@@ -53,9 +54,28 @@ class PublicationController extends Controller
                 'likes:id',
             ])
             ->latest()
+            ->distinct()
+            ->get();
+        $top3Pub = Publication::select('user_id', DB::raw('count(*) as publications_count'))
+            ->groupBy('user_id')
+            ->orderByDesc('publications_count')
+            ->with('user:id,name,avatar') // Para obtener los detalles del usuario
+            ->take(3) // Puedes ajustar el número según lo necesites
             ->get();
 
-        dd($publicationsForUser);
+        $top3Comments = Comment::select('user_id', DB::raw('count(*) as comments_count'))
+            ->groupBy('user_id')
+            ->orderByDesc('comments_count')
+            ->with('user:id,name,avatar') // Para obtener los detalles del usuario
+            ->take(3) // Puedes ajustar el número según lo necesites
+            ->get();
+        $top3LikedPublications = LikePublication::select('publication_id', DB::raw('count(*) as likes_count'))
+            ->groupBy('publication_id')
+            ->orderByDesc('likes_count')
+            ->with('publication:id,content') // Obtener los detalles de la publicación
+            ->take(3) // Puedes ajustar el número según lo necesites
+            ->get();
+
 
 
         $followingCount = Follower::where('follower_id', $user->id)->count();
@@ -70,6 +90,10 @@ class PublicationController extends Controller
             'publications' => $publications,
             'followers' => $followers,
             'publicationsForUser' => $publicationsForUser,
+            'top3Pub' => $top3Pub,
+            'top3Comments' => $top3Comments,
+            'top3LikedPublications' => $top3LikedPublications,
+
         ]);
     }
 
@@ -106,7 +130,7 @@ class PublicationController extends Controller
 
   public function store(Request $request): RedirectResponse
   {
-
+//    dd($request->all());
     $validated = $request->validate([
       'content' => 'required|string|max:255',
       'image' => 'nullable|image|max:1024',
@@ -157,7 +181,7 @@ class PublicationController extends Controller
   public function update(Request $request, Publication $publication): RedirectResponse
   {
     //
-    // dd($request->all(), $publication);
+//     dd($request->all(), $publication);
     Gate::authorize('update', $publication);
 
     $validated = $request->validate([

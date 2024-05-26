@@ -1,6 +1,6 @@
-import React, {useState, useEffect, useRef} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faThumbsUp, faComment, faEye, faEllipsisV} from "@fortawesome/free-solid-svg-icons";
+import { faThumbsUp, faComment, faEye, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useForm, usePage } from "@inertiajs/react";
@@ -21,13 +21,13 @@ export default function CardPub({ publication, user }) {
     const [editing, setEditing] = useState(false);
     const fileInputRef = useRef(null);
 
-    // const { post, reset } = useForm();
     const { auth } = usePage().props;
     const isAuthor = auth.user.id === publication.user.id;
-    const { data, setData, patch, clearErrors, reset, errors, post } = useForm({
+    const { data, setData, patch, clearErrors, reset, errors, post, put } = useForm({
         content: publication.content,
         image: publication.image,
     });
+
     useEffect(() => {
         setLiked(publication.likes.some(like => like.id === auth.user.id));
         const initialLikedComments = {};
@@ -93,15 +93,23 @@ export default function CardPub({ publication, user }) {
         e.preventDefault();
         const formData = new FormData();
         formData.append("content", data.content);
-        if (data.image) {
+        if (data.image instanceof File) {
             formData.append("image", data.image);
         }
+
         post(route("publications.update", publication.id), {
-            method: "patch",
+            method: "put",
+            data: formData,
             onSuccess: () => {
                 setEditing(false);
             },
+            onError: () => {
+                console.error(errors);
+            },
             preserveScroll: true,
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
         });
     };
 
@@ -109,10 +117,9 @@ export default function CardPub({ publication, user }) {
         <div className="max-w-6xl bg-white border border-gray-200 rounded-lg shadow p-6 flex flex-col space-y-4">
             <div className="flex justify-between items-center">
                 <div className="flex items-center space-x-4">
-                    <img className="rounded-full w-12 h-12" src={publication.user.avatar} alt={publication.user.name} />
+                    <img className="rounded-full w-12 h-12" src={publication.user.avatar ? `/storage/${publication.user.avatar}` : '/img/avatar_default.jpg'} alt={publication.user.name} />
                     <div>
                         <h5 className="text-sm font-bold">{publication.user.name}</h5>
-
                         <small className="ml-2 text-sm text-gray-600">{dayjs(publication.created_at).fromNow()}</small>
                     </div>
                 </div>
@@ -157,7 +164,7 @@ export default function CardPub({ publication, user }) {
                 </>
             )}
 
-             <div className="flex justify-between items-center mt-4">
+            <div className="flex justify-between items-center mt-4">
                 <button className="flex"
                         onClick={(e) => liked ? handleUnlike(publication.id, e) : handleLike(publication.id, e)}>
                     <FontAwesomeIcon icon={faThumbsUp} className="mr-2"/>

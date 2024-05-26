@@ -4,26 +4,35 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import { Transition } from '@headlessui/react';
+import React, {useRef} from "react";
+
 
 export default function UpdateProfileInformation({ mustVerifyEmail, status, className = '' }) {
     const user = usePage().props.auth.user;
+    const fileInputRef = useRef(null);
 
-    const { data, setData, patch, errors, processing, recentlySuccessful } = useForm({
+    const { data, setData, patch, post, errors, processing, recentlySuccessful } = useForm({
         name: user.name,
         email: user.email,
+        avatar: null,
     });
 
     const submit = (e) => {
         e.preventDefault();
+        const formData = new FormData();
+        formData.append("name", data.name);
+        formData.append("email", data.email);
+        if (data.avatar instanceof File) {
+            formData.append("avatar", data.avatar);
+        }
 
-        patch(route('profile.update'));
+        post(route('profile.update'));
     };
 
     return (
         <section className={className}>
             <header>
                 <h2 className="text-lg font-medium text-gray-900">Profile Information</h2>
-
                 <p className="mt-1 text-sm text-gray-600">
                     Update your account's profile information and email address.
                 </p>
@@ -31,8 +40,7 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
 
             <form onSubmit={submit} className="mt-6 space-y-6">
                 <div>
-                    <InputLabel htmlFor="name" value="Username" />
-
+                    <InputLabel htmlFor="name" value="Username"/>
                     <TextInput
                         id="name"
                         className="mt-1 block w-full"
@@ -42,14 +50,11 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                         isFocused
                         autoComplete="name"
                     />
-
-                    <InputError className="mt-2" message={errors.name} />
+                    <InputError className="mt-2" message={errors.name}/>
                 </div>
-       
 
                 <div>
-                    <InputLabel htmlFor="email" value="Email" />
-
+                    <InputLabel htmlFor="email" value="Email"/>
                     <TextInput
                         id="email"
                         type="email"
@@ -59,8 +64,14 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                         required
                         autoComplete="username"
                     />
+                    <InputError className="mt-2" message={errors.email}/>
+                </div>
 
-                    <InputError className="mt-2" message={errors.email} />
+                <div>
+                    <InputLabel htmlFor="avatar" value="Avatar"/>
+                    <TextInput  type='file' name='avatar' id='avatar' ref={fileInputRef}
+                               onChange={(e) => setData('avatar', e.target.files[0])} />
+                    <InputError className="mt-2" message={errors.avatar}/>
                 </div>
 
                 {mustVerifyEmail && user.email_verified_at === null && (
@@ -76,7 +87,6 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                                 Click here to re-send the verification email.
                             </Link>
                         </p>
-
                         {status === 'verification-link-sent' && (
                             <div className="mt-2 font-medium text-sm text-green-600">
                                 A new verification link has been sent to your email address.
@@ -87,7 +97,6 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
 
                 <div className="flex items-center gap-4">
                     <PrimaryButton disabled={processing}>Save</PrimaryButton>
-
                     <Transition
                         show={recentlySuccessful}
                         enter="transition ease-in-out"

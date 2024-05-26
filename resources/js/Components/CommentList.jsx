@@ -45,7 +45,7 @@ const CommentList = ({ comments, likedComments, handleLikeComment, handleUnlikeC
 
                 return (
                     <div key={comment.id} className="border-t border-gray-200 pt-4 flex items-start space-x-4">
-                        <img className="rounded-full w-10 h-10" src={comment.user.avatar || '/default-avatar.png'} alt={comment.user.name} />
+                        <img className="rounded-full w-10 h-10" src={comment.user.avatar ? `/storage/${comment.user.avatar}` :  '/img/avatar_default.jpg'} alt={comment.user.name} />
                         <div className="w-full">
                             <div className="flex items-center space-x-2">
                                 <h5 className="text-sm font-bold">{comment.user.name}</h5>
