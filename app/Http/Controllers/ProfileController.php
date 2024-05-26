@@ -26,8 +26,7 @@ class ProfileController extends Controller
         }
 
         $followerCount = Follower::where('user_id', $user->id)->count();
-//        $publications = Publication::where('user_id', $user->id)->with('user:id,name,avatar')->latest()->get();
-//        $publications = Publication::postsForTimeline(Auth::id());
+
         $publications = Publication::where('user_id', $user->id)
             ->with([
                 'user:id,name,avatar',

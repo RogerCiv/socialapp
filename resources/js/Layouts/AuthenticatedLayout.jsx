@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import ApplicationLogo from "@/Components/ApplicationLogo";
 import Dropdown from "@/Components/Dropdown";
 import NavLink from "@/Components/NavLink";
@@ -35,8 +35,8 @@ export default function Authenticated({ user, header, children }) {
                                 >
                                     Publications
                                 </NavLink>
-                           
-               
+
+
                             </div>
                         </div>
 
@@ -45,10 +45,14 @@ export default function Authenticated({ user, header, children }) {
                                 <Dropdown>
                                     <Dropdown.Trigger>
                                         <span className="inline-flex rounded-md">
+
                                             <button
                                                 type="button"
                                                 className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
                                             >
+                                                     <img className="size-10 rounded-full mr-2"
+                                                          src={user.avatar ? `/storage/${user.avatar}` : "/img/avatar_default.jpg"}
+                                                          alt=""/>
                                                 {user.name}
 
                                                 <svg
@@ -68,19 +72,19 @@ export default function Authenticated({ user, header, children }) {
                                     </Dropdown.Trigger>
 
                                     <Dropdown.Content>
-                                    <Dropdown.Link
+                                        <Dropdown.Link
                                             href={route("profile",{user:user.name})}
                                         >
                                             Profile
                                         </Dropdown.Link>
-                                        
+
                                         <Dropdown.Link
                                             href={route("profile.edit")}
                                         >
                                             Ajustes
                                         </Dropdown.Link>
                                         <Dropdown.Link
-                                           
+
                                         >
                                             <Link href="/info">Detalles</Link>
                                         </Dropdown.Link>
@@ -158,6 +162,9 @@ export default function Authenticated({ user, header, children }) {
                         <div className="px-4">
                             <div className="font-medium text-base text-gray-800">
                                 {user.name}
+                                <img className="size-12 rounded-full mr-2"
+                                     src={user.avatar ? `/storage/${user.avatar}` : "/img/avatar_default.jpg"}
+                                     alt=""/>
                             </div>
                             <div className="font-medium text-sm text-gray-500">
                                 {user.email}
