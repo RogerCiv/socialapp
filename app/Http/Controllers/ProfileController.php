@@ -1,9 +1,6 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Follower\FollowerController;
-use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\Follower;
 use App\Models\Publication;

@@ -4,6 +4,7 @@ import Dropdown from "@/Components/Dropdown";
 import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import { Link, usePage } from "@inertiajs/react";
+import Avatar from "@mui/material/Avatar";
 
 export default function Authenticated({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
@@ -50,9 +51,10 @@ export default function Authenticated({ user, header, children }) {
                                                 type="button"
                                                 className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
                                             >
-                                                     <img className="size-10 rounded-full mr-2"
-                                                          src={user.avatar ? `/storage/${user.avatar}` : "/img/avatar_default.jpg"}
-                                                          alt=""/>
+                                                       <Avatar
+                                                           alt={`${user.name} Avatar`}
+                                                           src={user.avatar ? `/storage/${user.avatar}` : "/img/avatar_default.jpg"}
+                                                       />
                                                 {user.name}
 
                                                 <svg
@@ -162,9 +164,11 @@ export default function Authenticated({ user, header, children }) {
                         <div className="px-4">
                             <div className="font-medium text-base text-gray-800">
                                 {user.name}
-                                <img className="size-12 rounded-full mr-2"
-                                     src={user.avatar ? `/storage/${user.avatar}` : "/img/avatar_default.jpg"}
-                                     alt=""/>
+                                <Avatar
+                                    alt={`${user.name} Avatar`}
+                                    src={user.avatar ? `/storage/${user.avatar}` : "/img/avatar_default.jpg"}
+                                    sx={{ width: 24, height: 24 }}
+                                />
                             </div>
                             <div className="font-medium text-sm text-gray-500">
                                 {user.email}

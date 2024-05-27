@@ -10,6 +10,7 @@ import Dropdown from "@/Components/Dropdown.jsx";
 import InputError from "@/Components/InputError.jsx";
 import TextInput from "@/Components/TextInput.jsx";
 import PrimaryButton from "@/Components/PrimaryButton.jsx";
+import Avatar from "@mui/material/Avatar";
 
 dayjs.extend(relativeTime);
 
@@ -116,29 +117,35 @@ export default function CardPub({ publication, user }) {
     return (
         <div className="max-w-6xl bg-white border border-gray-200 rounded-lg shadow p-6 flex flex-col space-y-4">
             <div className="flex justify-between items-center">
-                    <Link href={route('profile', {name: publication.user.name})}>
-                <div className="flex items-center space-x-4">
-
-                    <img className="rounded-full w-12 h-12" src={publication.user.avatar ? `/storage/${publication.user.avatar}` : '/img/avatar_default.jpg'} alt={publication.user.name} />
-                    <div>
-                        <h5 className="text-sm font-bold">{publication.user.name}</h5>
-                        <small className="ml-2 text-sm text-gray-600">{dayjs(publication.created_at).fromNow()}</small>
+                <Link href={route('profile', {name: publication.user.name})}>
+                    <div className="flex items-center space-x-4">
+                        <Avatar
+                            alt={`${publication.user.name} Avatar`}
+                            src={publication.user.avatar ? `/storage/${publication.user.avatar}` : "/img/avatar_default.jpg"}
+                            sx={{width: 56, height: 56}}
+                        />
+                        <div>
+                            <h5 className="text-sm font-bold">{publication.user.name}</h5>
+                            <small
+                                className="ml-2 text-sm text-gray-600">{dayjs(publication.created_at).fromNow()}</small>
+                        </div>
                     </div>
-
-                </div>
-                    </Link>
+                </Link>
                 {isAuthor && (
                     <Dropdown>
                         <Dropdown.Trigger>
                             <button className="text-gray-500">
-                                <FontAwesomeIcon icon={faEllipsisV} />
+                                <FontAwesomeIcon icon={faEllipsisV}/>
                             </button>
                         </Dropdown.Trigger>
                         <Dropdown.Content>
-                            <button className="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:bg-gray-100 transition duration-150 ease-in-out" onClick={() => setEditing(true)}>
+                            <button
+                                className="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:bg-gray-100 transition duration-150 ease-in-out"
+                                onClick={() => setEditing(true)}>
                                 Edit
                             </button>
-                            <Dropdown.Link as="button" href={route("publications.destroy", publication.id)} method="delete">
+                            <Dropdown.Link as="button" href={route("publications.destroy", publication.id)}
+                                           method="delete">
                                 Delete
                             </Dropdown.Link>
                         </Dropdown.Content>
@@ -148,13 +155,19 @@ export default function CardPub({ publication, user }) {
 
             {editing ? (
                 <form onSubmit={submit}>
-                    <textarea value={data.content} onChange={(e) => setData("content", e.target.value)} className="mt-4 w-full text-gray-900 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"></textarea>
-                    <InputError content={errors.content} className="mt-2" />
+                    <textarea value={data.content} onChange={(e) => setData("content", e.target.value)}
+                              className="mt-4 w-full text-gray-900 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"></textarea>
+                    <InputError content={errors.content} className="mt-2"/>
                     <TextInput label='Imagen' type='file' name='image' id='image' ref={fileInputRef}
-                               onChange={(e) => setData('image', e.target.files[0])} />
+                               onChange={(e) => setData('image', e.target.files[0])}/>
                     <div className="space-x-2 mt-4">
                         <PrimaryButton>Save</PrimaryButton>
-                        <button onClick={() => { setEditing(false); reset(); clearErrors(); }}>Cancel</button>
+                        <button onClick={() => {
+                            setEditing(false);
+                            reset();
+                            clearErrors();
+                        }}>Cancel
+                        </button>
                     </div>
                 </form>
             ) : (
@@ -168,26 +181,26 @@ export default function CardPub({ publication, user }) {
                 </>
             )}
 
-            <div className="flex justify-between items-center mt-4">
-                <button className="flex"
+            <div className="flex justify-between items-center mt-4 space-x-2 sm:space-x-4">
+                <button className="flex items-center"
                         onClick={(e) => liked ? handleUnlike(publication.id, e) : handleLike(publication.id, e)}>
-                    <FontAwesomeIcon icon={faThumbsUp} className="mr-2"/>
-                    {liked ? 'Unlike' : 'Like'} {publication.likes.length}
+                    <FontAwesomeIcon icon={faThumbsUp} className="mr-1 sm:mr-2"/>
+                    <span className="text-xs sm:text-sm">{liked ? 'Unlike' : 'Like'} {publication.likes.length}</span>
                 </button>
 
-                <button className="flex" onClick={toggleCommentForm}>
-                    <FontAwesomeIcon icon={faComment} className="mr-2"/>
-                    Comment
+                <button className="flex items-center" onClick={toggleCommentForm}>
+                    <FontAwesomeIcon icon={faComment} className="mr-1 sm:mr-2"/>
+                    <span className="text-xs sm:text-sm">Comment</span>
                 </button>
 
-                <button className="flex" onClick={toggleComments}>
-                    <FontAwesomeIcon icon={faEye} className="mr-2"/>
-                    Ver comentarios
+                <button className="flex items-center" onClick={toggleComments}>
+                    <FontAwesomeIcon icon={faEye} className="mr-1 sm:mr-2"/>
+                    <span className="text-xs sm:text-sm">Ver comentarios</span>
                 </button>
             </div>
 
             {showCommentForm && (
-                <CreateComment publication={publication} setShowCommentForm={setShowCommentForm} />
+                <CreateComment publication={publication} setShowCommentForm={setShowCommentForm}/>
             )}
             {showComments && (
                 <CommentList
@@ -198,5 +211,6 @@ export default function CardPub({ publication, user }) {
                 />
             )}
         </div>
+
     );
 }

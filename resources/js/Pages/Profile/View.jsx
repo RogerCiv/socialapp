@@ -11,7 +11,7 @@ import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import TabPanel from "@/Components/TabPanel.jsx";
-
+import Avatar from '@mui/material/Avatar';
 export default function View({
                                  mustVerifyEmail,
                                  status,
@@ -88,10 +88,10 @@ export default function View({
                         </button>
                     </div>
                     <div className="flex flex-col md:flex-row items-center space-x-0 md:space-x-20 mt-4 md:mt-0 py-2">
-                        <img
-                            className="size-20 rounded-full "
+                        <Avatar
+                            alt={`${user.name} Avatar`}
                             src={user.avatar ? `/storage/${user.avatar}` : "/img/avatar_default.jpg"}
-                            alt=""
+                            sx={{ width: 56, height: 56 }}
                         />
                         <div className="text-center md:text-left mt-4 md:mt-0">
                             <h1 className="text-2xl font-semibold">PROFILE {user.name}</h1>
