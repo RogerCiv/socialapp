@@ -7,6 +7,7 @@ use App\Http\Controllers\LikePublication\LikePublicationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Publication\PublicationController;
 use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\SearchController;
 use App\Models\Comment;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -73,6 +74,8 @@ Route::middleware('auth')->group(function () {
     // Route::get('/info', [FollowerController::class, 'getFollowers'])->name('followers.followers');
 
     Route::get('/user/followed', [UserController::class, 'followedUsers'])->name('user.followed');
+
+    Route::get('/search/{keywords}', [SearchController::class, 'search'])->name('search');
 
 });
 
