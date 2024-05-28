@@ -11,6 +11,7 @@ import InputError from "@/Components/InputError.jsx";
 import TextInput from "@/Components/TextInput.jsx";
 import PrimaryButton from "@/Components/PrimaryButton.jsx";
 import Avatar from "@mui/material/Avatar";
+import CreatePublicationDialog from "@/Components/CreatePublicationDialog.jsx";
 
 dayjs.extend(relativeTime);
 
@@ -20,13 +21,13 @@ export default function CardPub({ publication, user }) {
     const [showCommentForm, setShowCommentForm] = useState(false);
     const [showComments, setShowComments] = useState(false);
     const [editing, setEditing] = useState(false);
+    const [openEditDialog, setOpenEditDialog] = useState(false);
     const fileInputRef = useRef(null);
 
     const { auth } = usePage().props;
     const isAuthor = auth.user.id === publication.user.id;
     const { data, setData, patch, clearErrors, reset, errors, post, put } = useForm({
-        content: publication.content,
-        image: publication.image,
+        content:'',
     });
 
     useEffect(() => {
@@ -90,6 +91,16 @@ export default function CardPub({ publication, user }) {
         setShowComments(!showComments);
     };
 
+    const handleOpenEditDialog = () => {
+        setEditing(true);
+        setOpenEditDialog(true);
+    };
+
+    const handleCloseEditDialog = () => {
+        setEditing(false);
+        setOpenEditDialog(false);
+    };
+
     const submit = (e) => {
         e.preventDefault();
         const formData = new FormData();
@@ -103,6 +114,7 @@ export default function CardPub({ publication, user }) {
             data: formData,
             onSuccess: () => {
                 setEditing(false);
+                setOpenEditDialog(false);
             },
             onError: () => {
                 console.error(errors);
@@ -141,7 +153,7 @@ export default function CardPub({ publication, user }) {
                         <Dropdown.Content>
                             <button
                                 className="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:bg-gray-100 transition duration-150 ease-in-out"
-                                onClick={() => setEditing(true)}>
+                                onClick={handleOpenEditDialog}>
                                 Edit
                             </button>
                             <Dropdown.Link as="button" href={route("publications.destroy", publication.id)}
@@ -153,33 +165,12 @@ export default function CardPub({ publication, user }) {
                 )}
             </div>
 
-            {editing ? (
-                <form onSubmit={submit}>
-                    <textarea value={data.content} onChange={(e) => setData("content", e.target.value)}
-                              className="mt-4 w-full text-gray-900 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"></textarea>
-                    <InputError content={errors.content} className="mt-2"/>
-                    <TextInput label='Imagen' type='file' name='image' id='image' ref={fileInputRef}
-                               onChange={(e) => setData('image', e.target.files[0])}/>
-                    <div className="space-x-2 mt-4">
-                        <PrimaryButton>Save</PrimaryButton>
-                        <button onClick={() => {
-                            setEditing(false);
-                            reset();
-                            clearErrors();
-                        }}>Cancel
-                        </button>
-                    </div>
-                </form>
-            ) : (
-                <>
-                    {publication.image && (
-                        <img className="rounded-lg object-cover"
-                             src={publication.image.startsWith("http") ? publication.image : `/storage/${publication.image}`}
-                             alt="Publication Image"/>
-                    )}
-                    <p className="mt-4 text-gray-900">{publication.content}</p>
-                </>
+            {publication.image && !editing && (
+                <img className="rounded-lg object-cover"
+                     src={publication.image.startsWith("http") ? publication.image : `/storage/${publication.image}`}
+                     alt="Publication Image"/>
             )}
+            <p className="mt-4 text-gray-900">{publication.content}</p>
 
             <div className="flex justify-between items-center mt-4 space-x-2 sm:space-x-4">
                 <button className="flex items-center"
@@ -210,7 +201,18 @@ export default function CardPub({ publication, user }) {
                     handleUnlikeComment={handleUnlikeComment}
                 />
             )}
-        </div>
 
+            <CreatePublicationDialog
+                open={openEditDialog}
+                handleClose={handleCloseEditDialog}
+                submit={submit}
+                data={data}
+                setData={setData}
+                errors={errors}
+                fileInputRef={fileInputRef}
+                processing={false} // Adjust as needed
+                isEdit={true}
+            />
+        </div>
     );
 }

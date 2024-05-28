@@ -28,6 +28,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import Avatar from "@mui/material/Avatar";
 import TextField from '@mui/material/TextField';
 import { useEffect } from "react";
+import CreatePublicationDialog from "@/Components/CreatePublicationDialog.jsx";
 
 export default function Index({ auth, user, publications, publicationsForUser, top3Pub, top3Comments, top3LikedPublications }) {
     const fileInputRef = React.useRef(null);
@@ -97,51 +98,16 @@ export default function Index({ auth, user, publications, publicationsForUser, t
                         <Button color="primary" variant="contained" size='large' onClick={handleClickOpen}>
                             Crear Publicación
                         </Button>
-                        <Dialog open={open} onClose={handleClose}>
-
-                            <DialogTitle>Crear Publicación</DialogTitle>
-                            <DialogContent>
-                                <DialogContentText>
-                                    Para crear una nueva publicación, por favor ingrese el contenido y/o seleccione una imagen.
-                                </DialogContentText>
-                                <form id="publication-form" onSubmit={submit}>
-                                    <Textarea
-                                        color="primary"
-                                        minRows={4}
-                                        placeholder="Publication Content"
-                                        size="lg"
-                                        variant="solid"
-                                        name="content"
-                                        id="content"
-                                        onChange={(e) => setData("content", e.target.value)}
-
-                                    />
-                                    <InputError message={errors.content} className="mt-2" />
-                                    <div className='mt-4'>
-
-                                        <Button
-                                            component="label"
-                                            role={undefined}
-                                            variant="contained"
-                                            tabIndex={-1}
-                                            startIcon={<CloudUploadIcon />}
-                                            size='medium'
-                                        >
-                                            Upload Image
-                                            <VisuallyHiddenInput type="file" name='image' id='image' ref={fileInputRef}
-                                                onChange={(e) => setData('image', e.target.files[0])} />
-                                        </Button>
-                                        <InputError message={errors.image} className="mt-2" />
-                                    </div>
-                                </form>
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={handleClose}>Cancelar</Button>
-                                <Button type="submit" form="publication-form" disabled={processing}>
-                                    Publicar
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
+                        <CreatePublicationDialog
+                            open={open}
+                            handleClose={handleClose}
+                            submit={submit}
+                            data={data}
+                            setData={setData}
+                            errors={errors}
+                            fileInputRef={fileInputRef}
+                            processing={processing}
+                        />
                     </div>
                 </div>
                 <div className="flex items-center space-x-4">
