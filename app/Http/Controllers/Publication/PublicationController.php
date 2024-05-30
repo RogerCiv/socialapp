@@ -38,24 +38,6 @@ class PublicationController extends Controller
             'likes:id',
         ])->latest()->get();
 
-//        $publicationsForUser = Publication::query()
-//            ->select('publications.*')
-//            ->join('follower_user AS f', 'publications.user_id', '=', 'f.follower_id', )
-//            ->join('comments', 'comments.user_id', '=', 'f.follower_id')
-//
-////            ->where('f.user_id', $user->id)
-////            ->orWhere('publications.user_id', $user->id)
-//            ->with([
-//                'user:id,name,avatar',
-//                'comments' => function ($query) {
-//                    $query->with('user:id,name,avatar');
-//                    $query->with('likes:id');
-//                },
-//                'likes:id',
-//            ])
-//            ->latest()
-//            ->distinct()
-//            ->get();
         $publicationsForUser = Publication::query()
             ->select('publications.*')
             ->leftJoin('follower_user AS f1', 'publications.user_id', '=', 'f1.follower_id')

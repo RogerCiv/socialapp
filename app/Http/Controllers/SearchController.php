@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class SearchController extends Controller
 {
-    public function search(Request $request, string $search = null)
+    public function search(Request $request, string $search = null, User $user)
     {
         if (!$search)
             return redirect(route('dashboard'));
@@ -22,10 +22,21 @@ class SearchController extends Controller
             ->get();
 
 
-        $publications = Publication::query()
-            ->where('content', 'like', "%$search%")
-            ->paginate(20);
+//        $publications = Publication::query()
+//            ->where('content', 'like', "%$search%")
+//            ->paginate(20);
 
+        $publications = Publication::with([
+            'user:id,name,avatar',
+            'comments' => function ($query) {
+                $query->with('user:id,name,avatar')
+                    ->with('likes:id');
+            },
+            'likes:id',
+        ])
+            ->where('content', 'like', "%{$search}%")
+            ->latest()
+            ->paginate(20);
 
         if ($request->wantsJson()) {
             return $publications;
@@ -36,6 +47,7 @@ class SearchController extends Controller
             'publications' => $publications->items(),
             'search' => $search,
             'users' => UserResource::collection($users),
+            'user' => new UserResource($user),
         ]);
     }
 }

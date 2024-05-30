@@ -16,16 +16,16 @@ class CommentController extends Controller
     public function getComments() {
         $user = auth()->user();
         $comments = Comment::with('user', 'likes')->get();
-    
+
         // Agregar información de si el usuario actual ha dado like a cada comentario
         $comments->each(function($comment) use ($user) {
             $comment->user_has_liked = $comment->likes->contains('user_id', $user->id);
         });
-        dd($comments);
-    
+
+
         return view('publications.index', compact('comments'));
     }
-    
+
 
     public function store(Request $request)
     {
@@ -72,12 +72,12 @@ class CommentController extends Controller
     {
         $user = auth()->user();
         $comment = Comment::find($commentId);
-        
-        
+
+
         $like = $comment->likes()->where('user_id', $user->id)->first();
- 
+
         if ($like) {
-            $like->delete();
+            $like->pivot->delete();
             $comment->decrement('likes');
         }
 
@@ -105,18 +105,18 @@ class CommentController extends Controller
         return redirect()->back();
     }
 
-    
+
 
 
     public function destroy(Comment $comment)
     {
-    
+
         Gate::authorize('delete', $comment);
 
         $comment->delete();
-    
+
         // return redirect(route('publications.index'));
         return redirect()->back();
     }
-    
+
 }

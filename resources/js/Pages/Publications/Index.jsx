@@ -19,7 +19,7 @@ import TextField from '@mui/material/TextField';
 import {useEffect, useRef, useState} from "react";
 import CreatePublicationDialog from "@/Components/CreatePublicationDialog.jsx";
 
-export default function Index({ auth, user, publications, publicationsForUser, top3Pub, top3Comments, top3LikedPublications }) {
+export default function Index({ auth, user, publications, publicationsForUser, top3Pub, top3Comments }) {
     const fileInputRef = useRef(null);
     const { data, setData, post, processing, reset, errors } = useForm({
         content: "",

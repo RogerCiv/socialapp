@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbsUp, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import dayjs from "dayjs";
@@ -8,7 +8,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import InputError from "@/Components/InputError";
 import TextInput from "./TextInput";
 
-const CommentList = ({ comments, likedComments, handleLikeComment, handleUnlikeComment }) => {
+const CommentList = ({ comments, handleLikeComment, handleUnlikeComment }) => {
     const { auth } = usePage().props;
     const [editingCommentId, setEditingCommentId] = useState(null);
     const { data, setData, post, reset, clearErrors, errors } = useForm({ content: "" });
@@ -37,15 +37,19 @@ const CommentList = ({ comments, likedComments, handleLikeComment, handleUnlikeC
         clearErrors();
     };
 
+    useEffect(() => {
+        console.log(comments.map(comment => comment.likes));
+    }, []);
+
     return (
         <div className="mt-4">
             {comments.map(comment => {
                 const isAuthor = auth.user.id === comment.user.id;
-                const isLiked = likedComments[comment.id];
+                const isLiked = comment.likes.some(like => like.id === auth.user.id);
 
                 return (
                     <div key={comment.id} className="border-t border-gray-200 pt-4 flex items-start space-x-4">
-                        <img className="rounded-full w-10 h-10" src={comment.user.avatar ? `/storage/${comment.user.avatar}` :  '/img/avatar_default.jpg'} alt={comment.user.name} />
+                        <img className="rounded-full w-10 h-10" src={comment.user.avatar ? `/storage/${comment.user.avatar}` : '/img/avatar_default.jpg'} alt={comment.user.name} />
                         <div className="w-full">
                             <div className="flex items-center space-x-2">
                                 <h5 className="text-sm font-bold">{comment.user.name}</h5>
