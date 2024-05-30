@@ -8,7 +8,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import InputError from "@/Components/InputError";
 import TextInput from "./TextInput";
 
-const CommentList = ({ comments, handleLikeComment, handleUnlikeComment }) => {
+const CommentList = ({ comments,likedComments, handleLikeComment, handleUnlikeComment }) => {
     const { auth } = usePage().props;
     const [editingCommentId, setEditingCommentId] = useState(null);
     const { data, setData, post, reset, clearErrors, errors } = useForm({ content: "" });

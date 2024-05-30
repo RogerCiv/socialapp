@@ -75,7 +75,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/user/followed', [UserController::class, 'followedUsers'])->name('user.followed');
 
-    Route::get('/search/{keywords}', [SearchController::class, 'search'])->name('search');
+    Route::get('/search/{keywords?}', [SearchController::class, 'search'])->name('search');
 
 });
 

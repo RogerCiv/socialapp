@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Publication;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\PublicationResource;
 use App\Http\Resources\UserResource;
 use App\Models\Comment;
 use App\Models\Follower;
-use App\Models\LikeComment;
+
 use App\Models\LikePublication;
 use App\Models\Publication;
 use App\Models\User;
@@ -29,14 +28,17 @@ class PublicationController extends Controller
             $isCurrentUserFollower = Follower::where('user_id', $user->id)->where('follower_id', auth()->id())->exists();
         }
         $followerCount = Follower::where('user_id', $user->id)->count();
+
         $publications = Publication::with([
             'user:id,name,avatar',
             'comments' => function ($query) {
-                $query->with('user:id,name,avatar');
+                $query->with('user:id,name,avatar')
+                    ->orderBy('created_at', 'desc');
                 $query->with('likes:id');
             },
             'likes:id',
         ])->latest()->get();
+
 
         $publicationsForUser = Publication::query()
             ->select('publications.*')
@@ -44,8 +46,8 @@ class PublicationController extends Controller
             ->leftJoin('follower_user AS f2', 'publications.user_id', '=', 'f2.user_id')
             ->join('comments', 'comments.user_id', '=', 'publications.user_id')
             ->where(function ($query) use ($user) {
-                $query->where('f1.user_id', $user->id) // Publicaciones de los usuarios que sigues
-                ->orWhere('f2.follower_id', $user->id); // Publicaciones de los usuarios que te siguen
+                $query->where('f1.user_id', $user->id)
+                ->orWhere('f2.follower_id', $user->id);
             })
             ->with([
                 'user:id,name,avatar',
@@ -101,36 +103,6 @@ class PublicationController extends Controller
 
         ]);
     }
-
-//  public function index()
-//  {
-//    $user = auth()->user();
-//
-//
-//    $likePublications = LikePublication::where('like_publications.user_id', $user->id)
-//      ->join('publications', 'publications.id', '=', 'like_publications.publication_id')
-//      ->pluck('publications.id')
-//      ->toArray();
-//    $followers = Follower::where('user_id', $user->id)->get();
-//
-//    $publications = Publication::with([
-//      'user:id,name,avatar',
-//      'comments.user:id,name,avatar'
-//  ])->latest()->get();
-//  $likeComments = LikeComment::where('like_comments.user_id', $user->id)
-//  ->join('comments', 'comments.id', '=', 'like_comments.comment_id')
-//  ->pluck('comments.id')
-//  ->toArray();
-//  // dd($likeComments);
-//    // dd($publications);
-//    return Inertia::render('Publications/Index', [
-//      // 'publications' => Publication::with('user:id,name')->latest()->get(),
-//      'publications' => $publications,
-//      'likePublications' => $likePublications,
-//      'followers' => $followers,
-//      'likeComments' => $likeComments,
-//    ]);
-//  }
 
 
   public function store(Request $request): RedirectResponse

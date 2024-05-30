@@ -36,13 +36,12 @@ class SearchController extends Controller
         ])
             ->where('content', 'like', "%{$search}%")
             ->latest()
-            ->paginate(20);
+            ->paginate(22);
 
         if ($request->wantsJson()) {
             return $publications;
         }
 
-//    dd($publications->items());
         return inertia('Search', [
             'publications' => $publications->items(),
             'search' => $search,

@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Comment;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CommentRequest;
 use App\Models\Comment;
 use App\Models\LikeComment;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Storage;
 
 class CommentController extends Controller
@@ -17,26 +19,26 @@ class CommentController extends Controller
         $user = auth()->user();
         $comments = Comment::with('user', 'likes')->get();
 
-        // Agregar información de si el usuario actual ha dado like a cada comentario
         $comments->each(function($comment) use ($user) {
             $comment->user_has_liked = $comment->likes->contains('user_id', $user->id);
         });
-
-
         return view('publications.index', compact('comments'));
     }
 
 
     public function store(Request $request)
     {
+
         $request->validate([
             'content' => 'required|string',
             'publication_id' => 'required|integer|exists:publications,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048' // Validación de la imagen
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp' // Validación de la imagen
         ]);
 
+//        dd($request->all());
+//        dd($request->content);
         $comment = new Comment();
-        $comment->content = $request->content;
+        $comment->content = $request->input('content');
         $comment->publication_id = $request->publication_id;
         $comment->user_id = auth()->id();
 
@@ -49,7 +51,6 @@ class CommentController extends Controller
 
         return redirect()->back();
     }
-
     public function like( $commentId)
     {
         $user = auth()->user();
