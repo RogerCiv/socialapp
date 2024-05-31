@@ -12,9 +12,31 @@ class PublicationResource extends JsonResource
      *
      * @return array<string, mixed>
      */
+//    public function toArray($request)
+//    {
+//        $user = auth()->user();
+//        return [
+//            'id' => $this->id,
+//            'content' => $this->content,
+//            'created_at' => $this->created_at,
+//            'updated_at' => $this->updated_at,
+//            'user' => [
+//                'id' => $this->user->id,
+//                'name' => $this->user->name,
+//                // Añade otros campos del usuario que necesites
+//            ],
+//            'likes' => $this->likePublications->count(),
+//            'liked' => $this->isLikedByUser(auth()->id()), // Añadir este campo
+//            'followed' => $user->followedUsers->contains($this->user->id),
+//            'image' => $this->image,
+//        ];
+//    }
+
     public function toArray($request)
     {
         $user = auth()->user();
+        $followed = $user && $user->followedUsers ? $user->followedUsers->contains($this->user->id) : false;
+
         return [
             'id' => $this->id,
             'content' => $this->content,
@@ -27,9 +49,10 @@ class PublicationResource extends JsonResource
             ],
             'likes' => $this->likePublications->count(),
             'liked' => $this->isLikedByUser(auth()->id()), // Añadir este campo
-            'followed' => $user->followedUsers->contains($this->user->id), 
+            'followed' => $followed,
             'image' => $this->image,
         ];
+
     }
-    
+
 }

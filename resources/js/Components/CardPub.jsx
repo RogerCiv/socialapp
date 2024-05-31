@@ -27,6 +27,20 @@ export default function CardPub({ publication }) {
         content:'',
     });
 
+    const adaptPubContent = (publication) => {
+        let pubContent = publication.content.replace(
+            /(?:(\s+)|<p>)((#\w+)(?![^<]*<\/a>))/g,
+            (match, group1, group2) => {
+                const encodedGroup = encodeURIComponent(group2);
+                return `${group1 || ''}<a href="/search/${encodedGroup}" class="hashtag">${group2}</a>`;
+            }
+        );
+
+        return pubContent;
+    };
+
+
+
     useEffect(() => {
         setLiked(publication.likes.some(like => like.id === auth.user.id));
         const initialLikedComments = {};
@@ -68,6 +82,8 @@ export default function CardPub({ publication }) {
             preserveScroll: true,
         });
     };
+
+
 
     const handleUnlikeComment = (commentId, e) => {
         e.preventDefault();
@@ -167,7 +183,8 @@ export default function CardPub({ publication }) {
                      src={publication.image.startsWith("http") ? publication.image : `/storage/${publication.image}`}
                      alt="Publication Image"/>
             )}
-            <p className="mt-4 text-gray-900">{publication.content}</p>
+            {/*<p className="mt-4 text-gray-900">{publication.content}</p>*/}
+            <p className="mt-4 text-gray-900" dangerouslySetInnerHTML={{__html: adaptPubContent(publication)}}></p>
 
             <div className="flex justify-between items-center mt-4 space-x-2 sm:space-x-4">
                 <button className="flex items-center"

@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+
+.hashtag {
+  color: #1e44c7;
+  font-weight: bold;
+    background-color: #9dc1e3;
+}

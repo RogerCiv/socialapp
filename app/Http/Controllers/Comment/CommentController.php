@@ -91,7 +91,7 @@ class CommentController extends Controller
 
         $validated = $request->validate([
             'content' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048' // Validación de la imagen
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048'
         ]);
         if($request->hasFile('image')){
             if($comment->image){

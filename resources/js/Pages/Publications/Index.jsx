@@ -61,7 +61,7 @@ export default function Index({ auth, user, publications, publicationsForUser, t
 
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
-            router.get(route('search', {keywords}));
+            router.get(route('search', encodeURIComponent(keywords)));
             search();
         }
     };
