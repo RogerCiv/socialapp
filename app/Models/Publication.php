@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Laravel\Scout\Searchable;
 
 class Publication extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     // protected $fillable = [
     //     'user_id',
@@ -78,5 +79,10 @@ class Publication extends Model
     {
         return $this->belongsToMany(User::class, 'like_publications')
             ->withTimestamps(); // assuming you have a pivot table 'likes'
+    }
+
+    public function searchableAs(): string
+    {
+        return 'publications_index';
     }
 }

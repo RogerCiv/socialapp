@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Scout\Searchable;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable,Searchable;
 
     /**
      * The attributes that are mass assignable.
@@ -93,5 +94,10 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsToMany(Comment::class, 'likes')
             ->withTimestamps();
+    }
+
+    public function searchableAs(): string
+    {
+        return 'users_index';
     }
 }

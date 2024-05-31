@@ -34,6 +34,7 @@
         "@mui/lab": "^5.0.0-alpha.170",
         "@mui/material": "^5.15.18",
         "dayjs": "^1.11.11",
-        "framer-motion": "^11.2.4"
+        "framer-motion": "^11.2.4",
+        "react-infinite-scroll-component": "^6.1.0"
     }
 }
