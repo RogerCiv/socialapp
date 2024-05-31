@@ -24,18 +24,18 @@ export default function Authenticated({ user, header, children }) {
                             </div>
 
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink
-                                    href={route("dashboard")}
-                                    active={route().current("dashboard")}
-                                >
-                                    Dashboard
-                                </NavLink>
-                                <NavLink
-                                    href={route("publications.index")}
-                                    active={route().current("publications.index")}
-                                >
-                                    Publications
-                                </NavLink>
+                                {/*<NavLink*/}
+                                {/*    href={route("dashboard")}*/}
+                                {/*    active={route().current("dashboard")}*/}
+                                {/*>*/}
+                                {/*    Dashboard*/}
+                                {/*</NavLink>*/}
+                                {/*<NavLink*/}
+                                {/*    href={route("publications.index")}*/}
+                                {/*    active={route().current("publications.index")}*/}
+                                {/*>*/}
+                                {/*    Publications*/}
+                                {/*</NavLink>*/}
 
 
                             </div>
@@ -84,11 +84,6 @@ export default function Authenticated({ user, header, children }) {
                                             href={route("profile.edit")}
                                         >
                                             Ajustes
-                                        </Dropdown.Link>
-                                        <Dropdown.Link
-
-                                        >
-                                            <Link href="/info">Detalles</Link>
                                         </Dropdown.Link>
                                         <Dropdown.Link
                                             href={route("logout")}
@@ -152,12 +147,12 @@ export default function Authenticated({ user, header, children }) {
                     }
                 >
                     <div className="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink
-                            href={route("dashboard")}
-                            active={route().current("dashboard")}
-                        >
-                            Dashboard
-                        </ResponsiveNavLink>
+                        {/*<ResponsiveNavLink*/}
+                        {/*    href={route("dashboard")}*/}
+                        {/*    active={route().current("dashboard")}*/}
+                        {/*>*/}
+                        {/*    Dashboard*/}
+                        {/*</ResponsiveNavLink>*/}
                     </div>
 
                     <div className="pt-4 pb-1 border-t border-gray-200">

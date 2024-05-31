@@ -119,7 +119,7 @@ class PublicationController extends Controller
 
     $request->user()->publications()->create($validated);
 
-    return redirect(route('publications.index'));
+    return redirect(route('dashboard'));
   }
 
   public function show(Publication $publication)
@@ -175,7 +175,7 @@ class PublicationController extends Controller
 
     $publication->update($validated);
 
-    return redirect(route('publications.index'));
+    return redirect(route('dashboard'));
   }
 
   public function destroy(Publication $publication): RedirectResponse
@@ -185,6 +185,6 @@ class PublicationController extends Controller
 
     $publication->delete();
 
-    return redirect(route('publications.index'));
+    return redirect(route('dashboard'));
   }
 }

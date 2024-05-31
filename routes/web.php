@@ -13,18 +13,20 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+//Route::get('/', function () {
+//    return Inertia::render('Welcome', [
+//        'canLogin' => Route::has('login'),
+//        'canRegister' => Route::has('register'),
+//        'laravelVersion' => Application::VERSION,
+//        'phpVersion' => PHP_VERSION,
+//    ]);
+//});
+Route::get('/', [PublicationController::class, 'index'])
+    ->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+//Route::get('/dashboard', function () {
+//    return Inertia::render('Dashboard');
+//})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/u/{user:name}', [ProfileController::class, 'index'])->middleware(['auth', 'verified'])->name('profile');
 
@@ -38,7 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::group(['namespace' => 'Publication'], function () {
-        Route::get('/publications', [PublicationController::class, 'index'])->name('publications.index');
+//        Route::get('/publications', [PublicationController::class, 'index'])->name('publications.index');
         Route::post('/publications', [PublicationController::class, 'store'])->name('publications.store');
         Route::get('/publications/{publication}', [PublicationController::class, 'show'])->name('publications.show');
 
