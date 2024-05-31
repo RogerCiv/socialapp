@@ -9,3 +9,19 @@
   font-weight: bold;
     background-color: #9dc1e3;
 }
+@layer base {
+    :root {
+        --text: #1b1009;
+        --background: #ffffff;
+        --primary: #f4711f;
+        --secondary: #ee9e6d;
+        --accent: #c6530c;
+    }
+    .dark {
+        --text: #f6ebe4;
+        --background: #000000;
+        --primary: #e05c0b;
+        --secondary: #924311;
+        --accent: #f38139;
+    }
+}

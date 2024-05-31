@@ -140,7 +140,7 @@ export default function CardPub({ publication }) {
     };
 
     return (
-        <div className="max-w-6xl bg-white border border-gray-200 rounded-lg shadow p-6 flex flex-col space-y-4">
+        <div className="max-w-6xl bg-background-200 border border-gray-200 rounded-lg shadow p-6 flex flex-col space-y-4">
             <div className="flex justify-between items-center">
                 <Link href={route('profile', { name: publication.user.name })}>
                     <div className="flex items-center space-x-4">

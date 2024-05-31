@@ -12,8 +12,8 @@ export default function Authenticated({ user, header, children }) {
 
 
     return (
-        <div className="min-h-screen bg-gray-100 ">
-            <nav className="bg-white border-b border-gray-100">
+        <div className="min-h-screen bg-background  ">
+            <nav className="border-b border-accent bg-background p-2">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
                         <div className="flex">
@@ -41,21 +41,21 @@ export default function Authenticated({ user, header, children }) {
                             </div>
                         </div>
 
-                        <div className="hidden sm:flex sm:items-center sm:ms-6">
-                            <div className="ms-3 relative">
+                        <div className="hidden sm:flex sm:items-center sm:ms-6 ">
+                            <div className="ms-3 relative ">
                                 <Dropdown>
                                     <Dropdown.Trigger>
-                                        <span className="inline-flex rounded-md">
+                                        <span className="inline-flex rounded-md ">
 
                                             <button
                                                 type="button"
-                                                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
+                                                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
                                             >
                                                        <Avatar
                                                            alt={`${user.name} Avatar`}
                                                            src={user.avatar ? `/storage/${user.avatar}` : "/img/avatar_default.jpg"}
                                                        />
-                                                {user.name}
+                                               <p className=' ml-2 font-semibold text-white'>{user.name}</p>
 
                                                 <svg
                                                     className="ms-2 -me-0.5 h-4 w-4"
@@ -104,11 +104,11 @@ export default function Authenticated({ user, header, children }) {
                                         (previousState) => !previousState
                                     )
                                 }
-                                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
-                            >
+                                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500
+                                  transition duration-150 ease-in-out">
                                 <svg
                                     className="h-6 w-6"
-                                    stroke="currentColor"
+                                    stroke="#f38139"
                                     fill="none"
                                     viewBox="0 0 24 24"
                                 >
@@ -155,9 +155,9 @@ export default function Authenticated({ user, header, children }) {
                         {/*</ResponsiveNavLink>*/}
                     </div>
 
-                    <div className="pt-4 pb-1 border-t border-gray-200">
-                        <div className="px-4">
-                            <div className="font-medium text-base text-gray-800">
+                    <div className="pt-4 pb-1 border-t border-primary">
+                        <div className="px-4 text-text">
+                            <div className="font-medium text-base ">
                                 {user.name}
                                 <Avatar
                                     alt={`${user.name} Avatar`}
@@ -165,7 +165,7 @@ export default function Authenticated({ user, header, children }) {
                                     sx={{ width: 24, height: 24 }}
                                 />
                             </div>
-                            <div className="font-medium text-sm text-gray-500">
+                            <div className="font-medium text-sm ">
                                 {user.email}
                             </div>
                         </div>
