@@ -116,6 +116,7 @@ export default function Index({ auth, user, publications, publicationsForUser, t
                             variant="filled" color="warning" focused
                             onChange={(e) => setKeywords(e.target.value)}
                             onKeyDown={handleKeyDown}
+
                         />
 
                         {/*<TextField label="Outlined secondary" color="warning" focused />*/}

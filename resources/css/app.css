@@ -3,12 +3,16 @@
 @tailwind utilities;
 
 
-
 .hashtag {
-  color: #1e44c7;
-  font-weight: bold;
-    background-color: #9dc1e3;
+    color: var( --text-50);
+    font-weight: bold;
+    background-color: var(--accent-700);
 }
+.hashtag:hover {
+    color: var(--text-950);
+    background-color: var(--accent-500);
+}
+
 @layer base {
     :root {
         --text-50: #f9f1ec;
@@ -72,6 +76,7 @@
         --accent-950: #180a01;
 
     }
+
     .dark {
         --text-50: #130b06;
         --text-100: #26170d;

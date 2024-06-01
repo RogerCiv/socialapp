@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faThumbsUp, faComment, faEye, faEllipsisV, faThumbsDown} from "@fortawesome/free-solid-svg-icons";
+import {faThumbsUp, faComment, faEye, faEllipsisV, faThumbsDown, faHeart} from "@fortawesome/free-solid-svg-icons";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import {Link, useForm, usePage} from "@inertiajs/react";
@@ -9,6 +9,7 @@ import CommentList from "@/Components/CommentList.jsx";
 import Dropdown from "@/Components/Dropdown.jsx";
 import Avatar from "@mui/material/Avatar";
 import CreatePublicationDialog from "@/Components/CreatePublicationDialog.jsx";
+import {faHeart as faHeartRegular} from "@fortawesome/free-regular-svg-icons";
 
 dayjs.extend(relativeTime);
 
@@ -192,13 +193,13 @@ export default function CardPub({publication}) {
                         onClick={(e) => liked ? handleUnlike(publication.id, e) : handleLike(publication.id, e)}>
                     {
                         liked ? (
-                            <FontAwesomeIcon icon={faThumbsUp} className="mr-1 sm:mr-2 text-primary-500"/>
+                            <FontAwesomeIcon icon={faHeart} className="mr-2 text-primary-600" />
                         ) : (
-                            <FontAwesomeIcon icon={faThumbsUp} className="mr-1 sm:mr-2 text-white"/>
+                            <FontAwesomeIcon icon={faHeartRegular} className="mr-2 text-text-950" />
                         )
                     }
 
-                    <span className="text-xs sm:text-sm text-text-400">{publication.likes.length}</span>
+                    <span className="text-base font-semibold sm:text-sm text-text-600">{publication.likes.length}</span>
                 </button>
 
                 <button className="flex items-center" onClick={toggleCommentForm}>
