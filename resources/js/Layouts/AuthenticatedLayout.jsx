@@ -12,8 +12,8 @@ export default function Authenticated({ user, header, children }) {
 
 
     return (
-        <div className="min-h-screen bg-background  ">
-            <nav className="border-b border-accent bg-background p-2">
+        <div className="min-h-screen bg-background-50 ">
+            <nav className="border-b border-accent-600 bg-background-50 p-2">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
                         <div className="flex">
@@ -55,7 +55,7 @@ export default function Authenticated({ user, header, children }) {
                                                            alt={`${user.name} Avatar`}
                                                            src={user.avatar ? `/storage/${user.avatar}` : "/img/avatar_default.jpg"}
                                                        />
-                                               <p className=' ml-2 font-semibold text-white'>{user.name}</p>
+                                               <p className=' ml-2 font-semibold text-text-950'>{user.name}</p>
 
                                                 <svg
                                                     className="ms-2 -me-0.5 h-4 w-4"
@@ -155,24 +155,27 @@ export default function Authenticated({ user, header, children }) {
                         {/*</ResponsiveNavLink>*/}
                     </div>
 
-                    <div className="pt-4 pb-1 border-t border-primary">
-                        <div className="px-4 text-text">
-                            <div className="font-medium text-base ">
+                    <div className="pt-4 pb-1 border-t border-accent-600">
+                        <div className="px-4 grid grid-cols-1 text-text-950">
+                            <div className='flex gap-2 '>
+                                    <Avatar
+                                        alt={`${user.name} Avatar`}
+                                        src={user.avatar ? `/storage/${user.avatar}` : "/img/avatar_default.jpg"}
+                                        sx={{ width: 24, height: 24 }}
+                                    />
                                 {user.name}
-                                <Avatar
-                                    alt={`${user.name} Avatar`}
-                                    src={user.avatar ? `/storage/${user.avatar}` : "/img/avatar_default.jpg"}
-                                    sx={{ width: 24, height: 24 }}
-                                />
                             </div>
-                            <div className="font-medium text-sm ">
+                            <div className='text-text-700' >
                                 {user.email}
                             </div>
                         </div>
 
-                        <div className="mt-3 space-y-1">
+                        <div className="mt-3 space-y-1  text-text-950">
                             <ResponsiveNavLink href={route("profile.edit")}>
                                 Profile
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink href={route("profile.edit")}>
+                                Ajustes
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 method="post"

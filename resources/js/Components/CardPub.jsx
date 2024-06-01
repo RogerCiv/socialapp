@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faThumbsUp, faComment, faEye, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
+import React, {useState, useEffect, useRef} from "react";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faThumbsUp, faComment, faEye, faEllipsisV, faThumbsDown} from "@fortawesome/free-solid-svg-icons";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { Link, useForm, usePage } from "@inertiajs/react";
+import {Link, useForm, usePage} from "@inertiajs/react";
 import CreateComment from "@/Components/CreateComment.jsx";
 import CommentList from "@/Components/CommentList.jsx";
 import Dropdown from "@/Components/Dropdown.jsx";
@@ -12,7 +12,7 @@ import CreatePublicationDialog from "@/Components/CreatePublicationDialog.jsx";
 
 dayjs.extend(relativeTime);
 
-export default function CardPub({ publication }) {
+export default function CardPub({publication}) {
     const [liked, setLiked] = useState(false);
     const [likedComments, setLikedComments] = useState({});
     const [showCommentForm, setShowCommentForm] = useState(false);
@@ -21,9 +21,9 @@ export default function CardPub({ publication }) {
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const fileInputRef = useRef(null);
 
-    const { auth } = usePage().props;
+    const {auth} = usePage().props;
     const isAuthor = auth.user.id === publication.user.id;
-    const { data, setData, patch, clearErrors, reset, errors, post, put } = useForm({
+    const {data, setData, patch, clearErrors, reset, errors, post, put} = useForm({
         content: '',
     });
 
@@ -74,7 +74,7 @@ export default function CardPub({ publication }) {
         e.preventDefault();
         post(route("comments.like", commentId), {
             onSuccess: () => {
-                setLikedComments(prev => ({ ...prev, [commentId]: true }));
+                setLikedComments(prev => ({...prev, [commentId]: true}));
                 reset();
             },
             preserveScroll: true,
@@ -85,7 +85,7 @@ export default function CardPub({ publication }) {
         e.preventDefault();
         post(route("comments.unlike", commentId), {
             onSuccess: () => {
-                setLikedComments(prev => ({ ...prev, [commentId]: false }));
+                setLikedComments(prev => ({...prev, [commentId]: false}));
                 reset();
             },
             preserveScroll: true,
@@ -140,32 +140,34 @@ export default function CardPub({ publication }) {
     };
 
     return (
-        <div className="max-w-6xl bg-background-200 border border-gray-200 rounded-lg shadow p-6 flex flex-col space-y-4">
+        <div
+            className="max-w-6xl bg-background-50 border border-secondary-200 rounded-lg shadow p-6 flex flex-col space-y-4">
             <div className="flex justify-between items-center">
-                <Link href={route('profile', { name: publication.user.name })}>
+                <Link href={route('profile', {name: publication.user.name})}>
                     <div className="flex items-center space-x-4">
                         <Avatar
                             alt={`${publication.user.name} Avatar`}
                             src={publication.user.avatar ? `/storage/${publication.user.avatar}` : "/img/avatar_default.jpg"}
-                            sx={{ width: 56, height: 56 }}
+                            sx={{width: 56, height: 56}}
+                            className='border border-2 border-accent-500 hover:border-accent-300'
                         />
                         <div>
-                            <h5 className="text-sm font-bold">{publication.user.name}</h5>
+                            <h5 className="text-sm font-bold text-text-950">{publication.user.name}</h5>
                             <small
-                                className="ml-2 text-sm text-gray-600">{dayjs(publication.created_at).fromNow()}</small>
+                                className="ml-2 text-sm text-text-600">{dayjs(publication.created_at).fromNow()}</small>
                         </div>
                     </div>
                 </Link>
                 {isAuthor && (
                     <Dropdown>
                         <Dropdown.Trigger>
-                            <button className="text-gray-500">
-                                <FontAwesomeIcon icon={faEllipsisV} />
+                            <button className="text-primary-500">
+                                <FontAwesomeIcon icon={faEllipsisV}/>
                             </button>
                         </Dropdown.Trigger>
                         <Dropdown.Content>
                             <button
-                                className="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:bg-gray-100 transition duration-150 ease-in-out"
+                                className="block w-full px-4 py-2 text-left text-sm leading-5 text-text-950 hover:bg-background-100 focus:bg-background-150 transition duration-150 ease-in-out"
                                 onClick={handleOpenEditDialog}>
                                 Edit
                             </button>
@@ -181,30 +183,57 @@ export default function CardPub({ publication }) {
             {publication.image && !editing && (
                 <img className="rounded-lg object-cover"
                      src={publication.image.startsWith("http") ? publication.image : `/storage/${publication.image}`}
-                     alt="Publication Image" />
+                     alt="Publication Image"/>
             )}
-            <p className="mt-4 text-gray-900" dangerouslySetInnerHTML={{ __html: adaptPubContent(publication) }}></p>
+            <p className="mt-4 text-text-900" dangerouslySetInnerHTML={{__html: adaptPubContent(publication)}}></p>
 
             <div className="flex justify-between items-center mt-4 space-x-2 sm:space-x-4">
                 <button className="flex items-center"
                         onClick={(e) => liked ? handleUnlike(publication.id, e) : handleLike(publication.id, e)}>
-                    <FontAwesomeIcon icon={faThumbsUp} className="mr-1 sm:mr-2" />
-                    <span className="text-xs sm:text-sm">{liked ? 'Unlike' : 'Like'} {publication.likes.length}</span>
+                    {
+                        liked ? (
+                            <FontAwesomeIcon icon={faThumbsUp} className="mr-1 sm:mr-2 text-primary-500"/>
+                        ) : (
+                            <FontAwesomeIcon icon={faThumbsUp} className="mr-1 sm:mr-2 text-white"/>
+                        )
+                    }
+
+                    <span className="text-xs sm:text-sm text-text-400">{publication.likes.length}</span>
                 </button>
 
                 <button className="flex items-center" onClick={toggleCommentForm}>
-                    <FontAwesomeIcon icon={faComment} className="mr-1 sm:mr-2" />
-                    <span className="text-xs sm:text-sm">Comment</span>
+                    {
+                        showCommentForm ? (
+                            <>
+                                <FontAwesomeIcon icon={faComment} className="mr-1 sm:mr-2 text-primary-500"/>
+                                <span className="text-xs sm:text-sm text-text-700">Comment</span>
+                            </>
+                        ) : (
+                            <>
+                                <FontAwesomeIcon icon={faComment} className="mr-1 sm:mr-2 text-text-950"/>
+                                <span className="text-xs sm:text-sm text-text-900">Comment</span>
+                            </>
+                        )
+                    }
                 </button>
-
                 <button className="flex items-center" onClick={toggleComments}>
-                    <FontAwesomeIcon icon={faEye} className="mr-1 sm:mr-2" />
-                    <span className="text-xs sm:text-sm">Ver comentarios</span>
+                    {
+                        showComments ? (
+                            <>
+                                <FontAwesomeIcon icon={faEye} className="mr-1 sm:mr-2 text-primary-500"/>
+                                <span className="text-xs sm:text-sm text-text-700">Ver comentarios</span>
+                            </>
+                        ) : (
+                            <>
+                                <FontAwesomeIcon icon={faEye} className="mr-1 sm:mr-2 text-text-950"/>
+                                <span className="text-xs sm:text-sm text-text-900">Ver comentarios</span>
+                            </>
+                        )
+                    }
                 </button>
             </div>
-
             {showCommentForm && (
-                <CreateComment publication={publication} setShowCommentForm={setShowCommentForm} />
+                <CreateComment publication={publication} setShowCommentForm={setShowCommentForm}/>
             )}
             {showComments && (
                 <CommentList

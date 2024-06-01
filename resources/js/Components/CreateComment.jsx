@@ -1,5 +1,5 @@
-import { useForm } from "@inertiajs/react";
-import React, { useRef } from "react";
+import {useForm} from "@inertiajs/react";
+import React, {useRef} from "react";
 import TextInput from "@/Components/TextInput";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "./SecondaryButton";
@@ -9,9 +9,9 @@ import Button from "@mui/material/Button";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload.js";
 import {styled} from "@mui/material/styles";
 
-export default function CreateComment({ publication, setShowCommentForm }) {
+export default function CreateComment({publication, setShowCommentForm}) {
     const fileInputRef = useRef(null);
-    const { data, setData, post, processing, reset, errors } = useForm({
+    const {data, setData, post, processing, reset, errors} = useForm({
         content: "",
         image: "",
         publication_id: publication.id,
@@ -56,10 +56,10 @@ export default function CreateComment({ publication, setShowCommentForm }) {
           value={data.content}
           onChange={(e) => setData("content", e.target.value)}
           placeholder="Write a comment..."
-          className="mt-4 w-full text-gray-900 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"
+          className="mt-4 w-full text-gray-900 border-secondary-400 focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 rounded-md shadow-sm"
       ></textarea>
             <div className="mt-2 flex justify-end space-x-2">
-                <InputError content={errors.content} className="mt-2" />
+                <InputError content={errors.content} className="mt-2"/>
                 {/*<TextInput*/}
                 {/*    label="Imagen"*/}
                 {/*    type="file"*/}
@@ -73,23 +73,21 @@ export default function CreateComment({ publication, setShowCommentForm }) {
                     role={undefined}
                     variant="contained"
                     tabIndex={-1}
-                    startIcon={<CloudUploadIcon />}
+                    startIcon={<CloudUploadIcon/>}
                     size='medium'
+                    color='secondary'
                 >
-                     Imagen
+                    Imagen
                     <VisuallyHiddenInput type="file" name='image' id='image' ref={fileInputRef}
-                                         onChange={(e) => setData('image', e.target.files[0])} />
+                                         onChange={(e) => setData('image', e.target.files[0])}/>
                 </Button>
-                <PrimaryButton
-                    type="submit"
-                    disabled={processing}
-                    className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none focus:bg-indigo-500"
-                >
+
+                <Button type="submit" disabled={processing} variant="contained" color="warning">
                     Comment
-                </PrimaryButton>
-                <SecondaryButton type="button" onClick={() => setShowCommentForm(false)}>
+                </Button>
+                <Button onClick={() => setShowCommentForm(false)} variant="contained" color="error">
                     Cancel
-                </SecondaryButton>
+                </Button>
             </div>
         </form>
     );
