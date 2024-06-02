@@ -16,6 +16,7 @@ import {styled} from "@mui/material/styles";
 import AllInboxIcon from "@mui/icons-material/AllInbox.js";
 import GroupIcon from '@mui/icons-material/Group';
 import PersonIcon from '@mui/icons-material/Person';
+import FollowerCard from "@/Components/FollowCard.jsx";
 
 
 export default function View({
@@ -84,18 +85,23 @@ export default function View({
         }),
     );
 
+    useEffect(() => {
+        console.log('Followings', followings)
+        console.log('Followers', followers)
+    }, []);
+
     return (
         <AuthenticatedLayout user={auth.user}>
             <div className="container mx-auto bg-background-100 space-y-10">
-                <div className="group relative bg-white space-x-8 mt-8">
+                <div className="group relative bg-background-200 space-x-8 mt-8">
                     <img
                         className="w-full h-[200px] object-cover"
-                        src={user.cover || "/img/cover.jpg"}
+                        src={user.cover || "/img/cover-space.jpg"}
                         alt=""
                     />
                     <div className="absolute top-2 right-2">
                         <button
-                            className="bg-gray-50 hover:bg-gray-100 text-gray-800 py-1 px-2 text-sm flex items-center opacity-0 group-hover:opacity-100">
+                            className="bg-accent-700 hover:bg-gray-100 text-text-50 py-1 px-2 text-sm flex items-center opacity-0 group-hover:opacity-100">
                             Update Cover Image
                             <input
                                 type="file"
@@ -112,9 +118,9 @@ export default function View({
                             className='border border-2 border-accent-500 hover:border-accent-300'
                         />
                         <div className="text-center md:text-left mt-4 md:mt-0">
-                            <h1 className="text-2xl font-semibold">PROFILE {user.name}</h1>
-                            <p>
-                                {user.name} tienes {followerCount} <small>followers...</small>
+                            <h1 className="text-2xl font-semibold">Perfil de <span className='text-primary-500 font-bold'>{user.name}</span></h1>
+                            <p className='text-secondary-600 font-semibold'>
+                              Tienes {followerCount} <small>followers...</small>
                             </p>
                         </div>
 
@@ -133,7 +139,7 @@ export default function View({
 
                             {isMyProfile && (
                                 <Link href={route("profile.edit")}>
-                                    <PrimaryButton className="flex" variant="ghost">
+                                    <PrimaryButton className="flex bg-accent-500 hover:bg-accent-600" variant="ghost">
                                         <FontAwesomeIcon icon={faPenToSquare}/>
                                         Edit Profile
                                     </PrimaryButton>
@@ -165,24 +171,26 @@ export default function View({
                         </div>
                     </TabPanel>
                     <TabPanel value={value} index={1}>
-                        <div className="text-center">
-                            <h2>Followers</h2>
-                            <TextInput label="Search" placeholder="Search Followers" type="text" name="searchFollower"
-                                       id="searchFollower"/>
-                            {followers.length === 0 && <p>No followers yet...</p>}
-                            <div className="flex flex-col md:flex-row items-center space-x-8 space-y-4">
+                        <div className="flex items-center justify-center">
+                            {followers.length === 0 && <p className='text-text-800'>No followers yet...</p>}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
                                 {followers.map((follower) => (
-                                    <div key={follower.id} className="flex items-center space-x-4">
-                                        <img className="w-[50px] h-[50px] rounded-full"
-                                             src={follower.avatar ? `/storage/${follower.avatar}` : "/img/avatar_default.jpg"} alt=""/>
-                                        <Link href={route('profile', {name: follower.name})}>
-                                            <h3>{follower.name}</h3>
+                                    <div key={follower.id} className="bg-background-400 p-4 rounded-xl flex flex-col items-center">
+                                        <img
+                                            className="w-[50px] h-[50px] rounded-full mb-2"
+                                            src={follower.avatar ? `/storage/${follower.avatar}` : "/img/avatar_default.jpg"}
+                                            alt={`${follower.name}'s avatar`}
+                                        />
+                                        <Link href={route('profile', { name: follower.name })}>
+                                            <h3 className="text-center">{follower.name}</h3>
                                         </Link>
                                     </div>
                                 ))}
                             </div>
                         </div>
                     </TabPanel>
+
+
                     <TabPanel value={value} index={2}>
                         <div className="text-center">
                             <h2>Followings</h2>

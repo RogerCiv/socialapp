@@ -70,7 +70,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/comments/{publication}/like', [CommentController::class, 'like'])->name('comments.like');
     Route::post('/comments/{publication}/unlike', [CommentController::class, 'unlike'])->name('comments.unlike');
     Route::get('/comments/{publication}/likes', [CommentController::class, 'getLikes'])->name('comments.likes');
-    Route::resource('/info', InfoController::class);
+//    Route::resource('/info', InfoController::class);
 
     Route::get('/info', [PublicationController::class, 'getMyPublications'])->name('publications.my');
     // Route::get('/info', [FollowerController::class, 'getFollowers'])->name('followers.followers');
