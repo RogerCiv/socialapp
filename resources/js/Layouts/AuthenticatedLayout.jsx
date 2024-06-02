@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import ApplicationLogo from "@/Components/ApplicationLogo";
 import Dropdown from "@/Components/Dropdown";
-import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
-import { Link, usePage } from "@inertiajs/react";
+import { Link } from "@inertiajs/react";
 import Avatar from "@mui/material/Avatar";
 
 export default function Authenticated({ user, header, children }) {
@@ -171,7 +170,7 @@ export default function Authenticated({ user, header, children }) {
                         </div>
 
                         <div className="mt-3 space-y-1  text-text-950">
-                            <ResponsiveNavLink href={route("profile.edit")}>
+                            <ResponsiveNavLink   href={route("profile",{user:user.name})}>
                                 Profile
                             </ResponsiveNavLink>
                             <ResponsiveNavLink href={route("profile.edit")}>
