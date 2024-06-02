@@ -86,7 +86,7 @@ export default function Index({auth, user, publications, publicationsForUser, to
                 color: '#b0700c',
             },
             '&.Mui-focusVisible': {
-                backgroundColor: 'rgba(33,110,9,0.32)',
+                backgroundColor: 'rgba(110,224,78,0.32)',
             },
         }),
     );

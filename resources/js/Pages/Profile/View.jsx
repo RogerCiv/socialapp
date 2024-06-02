@@ -12,6 +12,12 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import TabPanel from "@/Components/TabPanel.jsx";
 import Avatar from '@mui/material/Avatar';
+import {styled} from "@mui/material/styles";
+import AllInboxIcon from "@mui/icons-material/AllInbox.js";
+import GroupIcon from '@mui/icons-material/Group';
+import PersonIcon from '@mui/icons-material/Person';
+
+
 export default function View({
                                  mustVerifyEmail,
                                  status,
@@ -62,14 +68,25 @@ export default function View({
         }
     }
 
-    useEffect(() => {
-        console.log(user);
-
-    }, []);
+    const StyledTab = styled((props) => <Tab disableRipple {...props} />)(
+        ({theme}) => ({
+            textTransform: 'none',
+            fontWeight: theme.typography.fontWeightRegular,
+            fontSize: theme.typography.pxToRem(15),
+            marginRight: theme.spacing(1),
+            color: 'rgba(250,250,250,0.89)',
+            '&.Mui-selected': {
+                color: '#b0700c',
+            },
+            '&.Mui-focusVisible': {
+                backgroundColor: 'rgba(110,224,78,0.32)',
+            },
+        }),
+    );
 
     return (
         <AuthenticatedLayout user={auth.user}>
-            <div className="container mx-auto bg-gray-200 space-y-10">
+            <div className="container mx-auto bg-background-100 space-y-10">
                 <div className="group relative bg-white space-x-8 mt-8">
                     <img
                         className="w-full h-[200px] object-cover"
@@ -92,6 +109,7 @@ export default function View({
                             alt={`${user.name} Avatar`}
                             src={user.avatar ? `/storage/${user.avatar}` : "/img/avatar_default.jpg"}
                             sx={{ width: 56, height: 56 }}
+                            className='border border-2 border-accent-500 hover:border-accent-300'
                         />
                         <div className="text-center md:text-left mt-4 md:mt-0">
                             <h1 className="text-2xl font-semibold">PROFILE {user.name}</h1>
@@ -125,20 +143,20 @@ export default function View({
                     </div>
                 </div>
                 <div className="flex items-center space-x-4">
-                    <Box sx={{width: "100%", bgcolor: "background.paper", borderRadius: 1}} p={2}>
+                    <Box sx={{width: "100%", bgcolor: 'var(--background-100)', borderRadius: 1}} p={2}>
                         <Tabs
                             value={value}
                             onChange={handleChange}
                             centered
                             variant="fullWidth"
                         >
-                            <Tab label="Publications"/>
-                            <Tab label="Followers"/>
-                            <Tab label="Followings"/>
+                            <StyledTab icon={<AllInboxIcon/>} label="Publications"/>
+                            <StyledTab icon={<GroupIcon/>} label="Followers"/>
+                            <StyledTab icon={<PersonIcon/>} label="Followings"/>
                         </Tabs>
                     </Box>
                 </div>
-                <div className="max-w-2xl mx-auto">
+                <div className="max-w-2xl mx-auto min-h-full">
                     <TabPanel value={value} index={0}>
                         <div className="space-y-8 flex flex-col">
                             {publications.map((publication) => (
