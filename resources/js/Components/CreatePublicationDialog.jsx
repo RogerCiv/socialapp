@@ -24,15 +24,29 @@ const VisuallyHiddenInput = styled('input')({
 
 export default function CreatePublicationDialog({ open, handleClose, submit, data, setData, errors, fileInputRef, processing, isEdit }) {
     return (
-        <Dialog open={open} onClose={handleClose}>
+        <Dialog open={open} onClose={handleClose} sx={{
+            '& .MuiDialog-paper': {
+                borderRadius: 1,
+                backgroundColor: 'var(--background-100)',
+                color: 'var(--text-950)',
+                boxShadow: 'var(--shadow-lg)',
+            },
+
+        }}>
             <DialogTitle>{isEdit ? "Editar Publicación" : "Crear Publicación"}</DialogTitle>
             <DialogContent>
-                <DialogContentText>
+                <DialogContentText sx={{
+                    color: 'var(--accent-400)',
+                    fontSize: 'var(--text-sm)',
+                    lineHeight: 'var(--leading-6)',
+                    fontWeight: 'var(--font-medium)',
+
+                }}>
                     {isEdit ? "Edite el contenido y/o imagen de la publicación." : "Para crear una nueva publicación, ingrese el contenido y/o seleccione una imagen."}
                 </DialogContentText>
                 <form id="publication-form" onSubmit={submit}>
                     <Textarea
-                        color="primary"
+                        color="warning"
                         minRows={4}
                         placeholder="Contenido de la Publicación"
                         size="lg"
@@ -41,6 +55,13 @@ export default function CreatePublicationDialog({ open, handleClose, submit, dat
                         id="content"
                         value={data.content}
                         onChange={(e) => setData("content", e.target.value)}
+                        sx={{
+                            width: 1,
+                            height: 300,
+                            backgroundColor: 'var(--background-300)',
+                            '&:focus': {
+                                outline: 'none',
+                            },}}
                     />
                     <InputError message={errors.content} className="mt-2" />
                     <div className='mt-4'>
@@ -49,6 +70,7 @@ export default function CreatePublicationDialog({ open, handleClose, submit, dat
                             role={undefined}
                             variant="contained"
                             tabIndex={-1}
+                            color='warning'
                             startIcon={<CloudUploadIcon />}
                             size='medium'
                         >
@@ -70,8 +92,8 @@ export default function CreatePublicationDialog({ open, handleClose, submit, dat
                 </form>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClose}>Cancelar</Button>
-                <Button type="submit" form="publication-form" disabled={processing}>
+                <Button onClick={handleClose} color="error" >Cancelar</Button>
+                <Button type="submit" form="publication-form" disabled={processing} color="success">
                     {isEdit ? "Guardar" : "Publicar"}
                 </Button>
             </DialogActions>

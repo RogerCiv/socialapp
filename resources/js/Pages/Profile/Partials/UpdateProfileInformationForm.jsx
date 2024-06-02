@@ -1,17 +1,31 @@
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import { Transition } from '@headlessui/react';
 import React, {useRef} from "react";
+import Button from "@mui/material/Button";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload.js";
+import {styled} from "@mui/material/styles";
 
 
 export default function UpdateProfileInformation({ mustVerifyEmail, status, className = '' }) {
     const user = usePage().props.auth.user;
     const fileInputRef = useRef(null);
 
-    const { data, setData, patch, post, errors, processing, recentlySuccessful } = useForm({
+    const VisuallyHiddenInput = styled('input')({
+        clip: 'rect(0 0 0 0)',
+        clipPath: 'inset(50%)',
+        height: 1,
+        overflow: 'hidden',
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        whiteSpace: 'nowrap',
+        width: 1,
+    });
+
+    const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
         name: user.name,
         email: user.email,
         avatar: null,
@@ -32,15 +46,15 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
     return (
         <section className={className}>
             <header>
-                <h2 className="text-lg font-medium text-gray-900">Profile Information</h2>
-                <p className="mt-1 text-sm text-gray-600">
+                <h2 className="text-lg font-medium text-text-950">Profile Information</h2>
+                <p className="mt-1 text-sm text-text-900">
                     Update your account's profile information and email address.
                 </p>
             </header>
 
             <form onSubmit={submit} className="mt-6 space-y-6">
                 <div>
-                    <InputLabel htmlFor="name" value="Username"/>
+                    <InputLabel htmlFor="name" value="Username" className='text-text-500'/>
                     <TextInput
                         id="name"
                         className="mt-1 block w-full"
@@ -49,12 +63,13 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                         required
                         isFocused
                         autoComplete="name"
+                        style={{ backgroundColor: 'var(--background-50)', color: 'var(--text-900)' }}
                     />
                     <InputError className="mt-2" message={errors.name}/>
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="email" value="Email"/>
+                    <InputLabel htmlFor="email" value="Email"  className='text-text-500'/>
                     <TextInput
                         id="email"
                         type="email"
@@ -62,15 +77,27 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                         value={data.email}
                         onChange={(e) => setData('email', e.target.value)}
                         required
-                        autoComplete="username"
+                        autoComplete="email"
+                        style={{ backgroundColor: 'var(--background-50)', color: 'var(--text-900)' }}
                     />
                     <InputError className="mt-2" message={errors.email}/>
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="avatar" value="Avatar"/>
-                    <TextInput  type='file' name='avatar' id='avatar' ref={fileInputRef}
-                               onChange={(e) => setData('avatar', e.target.files[0])} />
+                    <InputLabel htmlFor="avatar" value="Avatar"  className='text-text-500'/>
+                    <Button
+                        component="label"
+                        role={undefined}
+                        variant="contained"
+                        tabIndex={-1}
+                        color='warning'
+                        startIcon={<CloudUploadIcon />}
+                        size='medium'
+                    >
+                        Subir Imagen
+                        <VisuallyHiddenInput type='file' name='avatar' id='avatar' ref={fileInputRef}
+                                             onChange={(e) => setData('avatar', e.target.files[0])} />
+                    </Button>
                     <InputError className="mt-2" message={errors.avatar}/>
                 </div>
 
@@ -96,7 +123,8 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                 )}
 
                 <div className="flex items-center gap-4">
-                    <PrimaryButton disabled={processing}>Save</PrimaryButton>
+                    {/*<PrimaryButton disabled={processing}>Save</PrimaryButton>*/}
+                    <Button type="submit" disabled={processing} color="success" variant='contained'>Save</Button>
                     <Transition
                         show={recentlySuccessful}
                         enter="transition ease-in-out"
@@ -104,7 +132,7 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                         leave="transition ease-in-out"
                         leaveTo="opacity-0"
                     >
-                        <p className="text-sm text-gray-600">Saved.</p>
+                        <p className="text-sm text-primary-600">Saved.</p>
                     </Transition>
                 </div>
             </form>
