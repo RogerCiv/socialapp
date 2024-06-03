@@ -3,7 +3,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import PrimaryButton from "@/Components/PrimaryButton";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Link, useForm } from "@inertiajs/react";
+import {Head, Link, useForm} from "@inertiajs/react";
 import DangerButton from "@/Components/DangerButton.jsx";
 import CardPub from "@/Components/CardPub.jsx";
 import Box from "@mui/material/Box";
@@ -105,6 +105,7 @@ export default function View({
 
     return (
         <AuthenticatedLayout user={auth.user}>
+            <Head title={`Perfil de ${user.name}`}/>
             <div className="container mx-auto bg-background-100 space-y-10">
                 <div className="group relative bg-background-200 space-x-8 mt-8">
                     <img

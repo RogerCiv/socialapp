@@ -146,12 +146,6 @@ export default function Index({auth, user, publications, publicationsForUser, to
                         variant="fullWidth"
 
                     >
-                        {/*<Tab label="All"/>*/}
-                        {/*<Tab label="Trend"/>*/}
-                        {/*<Tab label="Stats"/>*/}
-                        {/*<Tab label={<Typography variant="bodySM">All</Typography>} />*/}
-                        {/*<Tab label={<Typography variant="bodySM">Trend</Typography>} />*/}
-                        {/*<Tab label={<Typography variant="bodySM">Stats</Typography>} />*/}
                         <StyledTab icon={<AllInboxIcon/>} label="All"/>
                         <StyledTab icon={<TrendingUpIcon/>} label="Trend"/>
                         <StyledTab icon={<QueryStatsIcon/>} label="Stats"/>
