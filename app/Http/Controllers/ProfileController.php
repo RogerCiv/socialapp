@@ -9,6 +9,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -38,10 +39,18 @@ class ProfileController extends Controller
 
         $followingCount = Follower::where('follower_id', $user->id)->count();
 
+//        $followers = User::query()
+//            ->select('users.*')
+//            ->join('follower_user AS f', 'f.user_id', '=', 'users.id')
+//            ->where('f.follower_id', $user->id)
+//            ->get();
         $followers = User::query()
-            ->select('users.*')
-            ->join('follower_user AS f', 'f.user_id', '=', 'users.id') // Corregir la condición de unión
-            ->where('f.follower_id', $user->id) // Filtrar por el id del usuario seguido
+            ->select('users.*',
+                DB::raw('(SELECT COUNT(*) FROM publications WHERE publications.user_id = users.id) as publications_count'),
+                DB::raw('(SELECT COUNT(*) FROM follower_user WHERE follower_user.user_id = users.id) as followers_count')
+            )
+            ->join('follower_user AS f', 'f.user_id', '=', 'users.id')
+            ->where('f.follower_id', $user->id)
             ->get();
 
         $followings = User::query()
@@ -59,7 +68,7 @@ class ProfileController extends Controller
             'followerCount' => $followerCount,
             'followingCount' => $followingCount,
             'publications' => $publications,
-            'followers' => UserResource::collection($followers),
+            'followers' => $followers,
             'followings' => UserResource::collection($followings),
             'comments' => $comments,
         ]);

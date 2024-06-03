@@ -114,13 +114,14 @@ export default function View({
                         <Avatar
                             alt={`${user.name} Avatar`}
                             src={user.avatar ? `/storage/${user.avatar}` : "/img/avatar_default.jpg"}
-                            sx={{ width: 56, height: 56 }}
+                            sx={{width: 56, height: 56}}
                             className='border border-2 border-accent-500 hover:border-accent-300'
                         />
                         <div className="text-center md:text-left mt-4 md:mt-0">
-                            <h1 className="text-2xl font-semibold">Perfil de <span className='text-primary-500 font-bold'>{user.name}</span></h1>
+                            <h1 className="text-2xl font-semibold text-text-950">Perfil de <span
+                                className='text-primary-500 font-bold'>{user.name}</span></h1>
                             <p className='text-secondary-600 font-semibold'>
-                              Tienes {followerCount} <small>followers...</small>
+                                Tienes {followerCount} <small>followers...</small>
                             </p>
                         </div>
 
@@ -139,7 +140,7 @@ export default function View({
 
                             {isMyProfile && (
                                 <Link href={route("profile.edit")}>
-                                    <PrimaryButton className="flex bg-accent-500 hover:bg-accent-600" variant="ghost">
+                                    <PrimaryButton className="flex bg-primary-400 hover:bg-primary-500 " variant="ghost">
                                         <FontAwesomeIcon icon={faPenToSquare}/>
                                         Edit Profile
                                     </PrimaryButton>
@@ -162,29 +163,34 @@ export default function View({
                         </Tabs>
                     </Box>
                 </div>
-                <div className="max-w-2xl mx-auto min-h-full">
+                <div className="max-w-7xl mx-auto min-h-full">
                     <TabPanel value={value} index={0}>
-                        <div className="space-y-8 flex flex-col">
-                            {publications.map((publication) => (
-                                <CardPub publication={publication} key={publication.id} user={user}/>
-                            ))}
+                        <div className="flex flex-col justify-center items-center place-items-center">
+                            <div className='flex items-center justify-center place-items-center '>
+
+                                {publications.map((publication) => (
+                                    <CardPub publication={publication} key={publication.id} user={user}/>
+                                ))}
+                            </div>
                         </div>
                     </TabPanel>
                     <TabPanel value={value} index={1}>
                         <div className="flex items-center justify-center">
                             {followers.length === 0 && <p className='text-text-800'>No followers yet...</p>}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
+                            <div
+                                className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6 max-w-6xl">
                                 {followers.map((follower) => (
-                                    <div key={follower.id} className="bg-background-400 p-4 rounded-xl flex flex-col items-center">
-                                        <img
-                                            className="w-[50px] h-[50px] rounded-full mb-2"
-                                            src={follower.avatar ? `/storage/${follower.avatar}` : "/img/avatar_default.jpg"}
-                                            alt={`${follower.name}'s avatar`}
-                                        />
-                                        <Link href={route('profile', { name: follower.name })}>
-                                            <h3 className="text-center">{follower.name}</h3>
-                                        </Link>
-                                    </div>
+                                    <Link href={route('profile', {name: follower.name})} key={follower.id}>
+                                        <div key={follower.id}
+                                             className="bg-secondary-400 p-4 rounded-xl flex flex-col items-center hover:bg-secondary-500 ">
+                                            <img
+                                                className="size-20 rounded-full mb-2"
+                                                src={follower.avatar ? `/storage/${follower.avatar}` : "/img/avatar_default.jpg"}
+                                                alt={`${follower.name}'s avatar`}
+                                            />
+                                                <h3 className="text-center text-text-950">{follower.name}</h3>
+                                        </div>
+                                    </Link>
                                 ))}
                             </div>
                         </div>
@@ -192,20 +198,19 @@ export default function View({
 
 
                     <TabPanel value={value} index={2}>
-                        <div className="text-center">
-                            <h2>Followings</h2>
-                            <TextInput label="Search" placeholder="Search Followings" type="text"
-                                       name="searchFollowings" id="searchFollowings"/>
+                        <div className="flex items-center justify-center">
                             {followings.length === 0 && <p>No followings yet...</p>}
                             <div className="flex flex-col md:flex-row items-center space-x-8 space-y-4">
                                 {followings.map((following) => (
-                                    <div key={following.id} className="flex items-center space-x-4">
-                                        <img className="w-[50px] h-[50px] rounded-full"
-                                             src={following.avatar ? `/storage/${following.avatar}` : "/img/avatar_default.jpg"} alt=""/>
-                                        <Link href={route('profile', {name: following.name})}>
-                                            <h3>{following.name}</h3>
-                                        </Link>
-                                    </div>
+                                    <Link href={route('profile', {name: following.name})} key={following.id}>
+                                        <div key={following.id}
+                                             className="bg-secondary-400 p-4 rounded-xl flex flex-col items-center hover:bg-secondary-500 ">
+                                            <img className="size-20 rounded-full mb-2"
+                                                 src={following.avatar ? `/storage/${following.avatar}` : "/img/avatar_default.jpg"}
+                                                 alt=""/>
+                                            <h3 className="text-center text-text-950">{following.name}</h3>
+                                        </div>
+                                    </Link>
                                 ))}
                             </div>
                         </div>
