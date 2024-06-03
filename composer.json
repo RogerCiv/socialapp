@@ -13,6 +13,7 @@
         "laravel/scout": "^10.9",
         "laravel/tinker": "^2.9",
         "meilisearch/meilisearch-php": "^1.8",
+        "moonshine/moonshine": "^2.14",
         "tightenco/ziggy": "^2.0"
     },
     "require-dev": {
