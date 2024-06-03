@@ -1,4 +1,3 @@
-import {useEffect} from "react";
 import Box from "@mui/material/Box";
 import {Link} from "@inertiajs/react";
 import Card from "@mui/joy/Card";
@@ -10,48 +9,43 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import * as React from "react";
 import Button from "@mui/material/Button";
 import CardPub from "@/Components/CardPub.jsx";
+import Avatar from "@mui/material/Avatar";
 
 export default function Search({publications, users, auth, user}) {
-    // const {  publications } = props;
-    const crownColors = ["text-yellow-500", "text-slate-500", "text-[#bf8970] "];
 
-    useEffect(() => {
-        // console.log(publications.map((publication) => publication));
-        // console.log(users.map((user) => user))
-    }, [publications]); // Obs
     return (
         <>
             <AuthenticatedLayout user={auth.user}>
                 <div className='flex flex-col justify-center md:max-w-6xl md:mx-auto p-4'>
-                    <div className='grid-cols-1 sm:grid-cols-2  space-y-6'>
-                        <h1>Search</h1>
-                        <div className='space-y-6'>
-                            <h2 className='text-lg font-bold'>Users</h2>
-
+                        <div className='flex flex-col justify-center items-center space-y-8'>
+                            <h2 className='text-lg font-bold text-text-950'>Usuarios</h2>
+                                    {users.length === 0 && <Typography fontWeight="md" textAlign='center'   sx={{ color: 'var(--text-800)'}}>No se encontraron usuarios...</Typography>}
                                 <Box display="grid" gridTemplateColumns="repeat(3, 1fr)" gap={4}
-                                     sx={{'@media (max-width: 768px)': {gridTemplateColumns: '1fr'}}}>
+                                     sx={{'@media (max-width: 868px)': {gridTemplateColumns: '1fr'}}}>
                                     {users.map((user) => (
-
-                                        <Card orientation="horizontal" variant="outlined" key={user.id}>
+                                        <Card orientation="horizontal" variant="outlined" key={user.id}
+                                              sx={{borderRadius: 'xl', backgroundColor: 'var(--background-100)', borderColor: 'divider', borderWidth: 1}}>
                                             <CardOverflow>
-                                                <AspectRatio ratio="1" sx={{width: 90, paddingTop: 1}}>
-                                                    <img
-                                                        className="rounded-full w-24 h-24 mx-auto"
-                                                        src={user.avatar ? `/storage/${user.avatar}` : '/img/avatar_default.jpg'}
-                                                        alt=""
+                                                <AspectRatio ratio="1" sx={{width: 90, paddingTop: 2, borderRadius:'xl'}}>
+                                                    <Avatar
+                                                        alt={`${user.name} Avatar`}
+                                                        src={user.avatar ? `/storage/${user.avatar}` : "/img/avatar_default.jpg"}
+                                                        sx={{width: 56, height: 56 }}
+                                                        className='border border-2 border-accent-500 hover:border-accent-300'
                                                     />
                                                 </AspectRatio>
                                             </CardOverflow>
                                             <CardContent>
-                                                <Typography fontWeight="md" textColor="success.plainColor">
+                                                <Typography fontWeight="md"  sx={{
+                                                    color: 'var(--accent-500)',
+                                                }}>
                                                     {user.name ? user.name : 'Unknown'}
                                                 </Typography>
-                                                <Typography level="body-sm">Resultado:
+                                                <Typography level="body-sm"  sx={{
+                                                    color: 'var(--text-950)',
+                                                }}>Resultado:
                                                     #{users.indexOf(user) + 1}</Typography>
-                                                {/* Asumiendo que tienes la propiedad publications_count en el modelo User */}
-
                                             </CardContent>
-                                            {/* Supongo que quieres mostrar la corona para los usuarios más populares */}
                                             <CardOverflow
                                                 variant="soft"
                                                 color="primary"
@@ -65,25 +59,33 @@ export default function Search({publications, users, auth, user}) {
                                                     textTransform: 'uppercase',
                                                     borderLeft: '1px solid',
                                                     borderColor: 'divider',
+                                                    backgroundColor: 'var(--background-200)',
                                                 }}>
                                                 <Link href={route('profile', {name: user.name})}>
-                                                    <Button>Ver Perfil</Button>
+                                                    <Button sx={{
+                                                        color: 'var(--text-950)',
+                                                        fontSize: 'xs',
+                                                        fontWeight: 'xl',
+                                                        letterSpacing: '1px',
+                                                        textTransform: 'uppercase',
+                                                    }}>Ver Perfil</Button>
                                                 </Link>
                                             </CardOverflow>
                                         </Card>
                                     ))}
                                 </Box>
-
                         </div>
-                    </div>
 
-                    <div className=''>
-                        <h2 className='text-lg font-bold'>Publications</h2>
+                    <div className='flex flex-col justify-center items-center space-y-6 mt-8'>
+                        <h2 className='text-lg font-bold text-text-950'>Publicaciones</h2>
+                        <div className='max-w-6xl space-y-6 px-4 md:px-0'>
+                            {publications.length === 0 && <Typography fontWeight="md"  sx={{ color: 'var(--text-800)'}}>No se encontraron publicaciones...</Typography>}
                         {
                             publications.map((publication) => (
                                 <CardPub publication={publication} key={publication.id} user={user}/>
                             ))
                         }
+                        </div>
                     </div>
                 </div>
             </AuthenticatedLayout>

@@ -39,11 +39,6 @@ class ProfileController extends Controller
 
         $followingCount = Follower::where('follower_id', $user->id)->count();
 
-//        $followers = User::query()
-//            ->select('users.*')
-//            ->join('follower_user AS f', 'f.user_id', '=', 'users.id')
-//            ->where('f.follower_id', $user->id)
-//            ->get();
         $followers = User::query()
             ->select('users.*',
                 DB::raw('(SELECT COUNT(*) FROM publications WHERE publications.user_id = users.id) as publications_count'),
@@ -74,19 +69,7 @@ class ProfileController extends Controller
         ]);
     }
 
-    // public function index()
-    // {
-    //     // $user = auth()->user();
-    //     $user = Auth::user();
-    //     $followers = $user->followers()->get();
-    //     $publications = Publication::with('user:id,name')->latest()->get();
 
-
-    //     return Inertia::render('Info/Index');
-    // }
-    /**
-     * Display the user's profile form.
-     */
     public function edit(Request $request): Response
     {
         return Inertia::render('Profile/Edit', [
@@ -95,26 +78,29 @@ class ProfileController extends Controller
         ]);
     }
 
-    /**
-     * Update the user's profile information.
-     */
-//    public function update(Request $request): RedirectResponse
-//    {
-//        dd($request->all());
-//        $request->user()->fill($request->validated());
-//
-//        if ($request->user()->isDirty('email')) {
-//            $request->user()->email_verified_at = null;
-//        }
-//        $request->user()->save();
-//
-//        return Redirect::route('profile.edit');
-//    }
+    public function updateCover(Request $request)
+    {
+        $request->validate([
+            'cover' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
+
+        if ($request->hasFile('cover')) {
+            $cover = $request->file('cover')[0];
+            $coverPath = $cover->store('covers', 'public');
+
+
+            auth()->user()->update([
+                'cover' => $coverPath,
+            ]);
+
+            return response()->json(['cover' => $coverPath], 200);
+        }
+
+        return response()->json(['error' => 'No file uploaded'], 400);
+    }
 
     public function update(Request $request): RedirectResponse
     {
-        // dd($request->all()); // Para depuración, puedes dejar esto comentado
-
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255',
