@@ -79,12 +79,14 @@ export default function CreatePublicationDialog({ open, handleClose, submit, dat
                                                  onChange={(e) => setData('image', e.target.files[0])} />
                         </Button>
                         {isEdit && data.image && !(data.image instanceof File) && (
+                            <div className='flex justify-center items-center w-full'>
                             <div className="mt-2">
                                 <img
                                     src={data.image.startsWith('http') ? data.image : `/storage/${data.image}`}
                                     alt="Current Image"
-                                    className="rounded-lg object-cover max-h-64"
+                                    className="rounded-lg object-cover max-h-64 w-64"
                                 />
+                            </div>
                             </div>
                         )}
                         <InputError message={errors.image} className="mt-2" />

@@ -249,9 +249,7 @@ export default function Index({auth, user, publications, publicationsForUser, to
                                         </Card>
                                     </Link>
                                 ))}
-
                             </Box>
-
                         </div>
                     </div>
                 </TabPanel>
