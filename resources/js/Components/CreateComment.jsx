@@ -56,14 +56,6 @@ export default function CreateComment({publication, setShowCommentForm}) {
       ></textarea>
             <div className="mt-2 flex justify-end space-x-2">
                 <InputError content={errors.content} className="mt-2"/>
-                {/*<TextInput*/}
-                {/*    label="Imagen"*/}
-                {/*    type="file"*/}
-                {/*    name="image"*/}
-                {/*    id="image"*/}
-                {/*    ref={fileInputRef}*/}
-                {/*    onChange={(e) => setData("image", e.target.files[0])}*/}
-                {/*/>*/}
                 <Button
                     component="label"
                     role={undefined}

@@ -22,11 +22,6 @@ class SearchController extends Controller
             ->latest()
             ->get();
 
-
-//        $publications = Publication::query()
-//            ->where('content', 'like', "%$search%")
-//            ->paginate(20);
-
         $publications = Publication::with([
             'user:id,name,avatar',
             'comments' => function ($query) {
@@ -50,50 +45,4 @@ class SearchController extends Controller
             'user' => new UserResource($user),
         ]);
     }
-//    public function search(Request $request, string $search = null)
-//    {
-//        if (!$search) {
-//            return redirect(route('dashboard'));
-//        }
-//
-//        $users = User::query()
-//            ->where('name', 'like', "%$search%")
-//            ->latest()
-//            ->get();
-//
-////        $publications = Publication::with([
-////            'user:id,name,avatar',
-////            'comments' => function ($query) {
-////                $query->with('user:id,name,avatar')
-////                    ->with('likes:id');
-////            },
-////            'likes:id',
-////        ])
-////            ->where('content', 'like', "%{$search}%")
-////            ->latest()
-////            ->paginate(20);
-//
-//        $publications = Publication::with([
-//            'user:id,name,avatar',
-//            'comments' => function ($query) {
-//                $query->with('user:id,name,avatar')
-//                    ->with('likes:id');
-//            },
-//            'likes:id',
-//        ])
-//            ->where('content', 'like', "%{$search}%")
-//            ->latest()
-//            ->paginate(20);
-//
-//        $authUser = Auth::user();
-////        dd($publications);
-////        dd(PublicationResource::collection($publications));
-//        return inertia('Search', [
-//            'initialPublications' => PublicationResource::collection($publications),
-//            'initialUsers' => UserResource::collection($users),
-//            'auth' => ['user' => new UserResource($authUser)],
-//            'search' => $search,
-//        ]);
-//    }
-
 }

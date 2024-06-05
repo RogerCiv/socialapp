@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Models\Comment;
 use App\Models\Follower;
-
 use App\Models\LikePublication;
 use App\Models\Publication;
 use App\Models\User;

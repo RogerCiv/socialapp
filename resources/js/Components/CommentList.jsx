@@ -6,11 +6,13 @@ import { useForm, usePage,Link } from "@inertiajs/react";
 import Dropdown from "@/Components/Dropdown";
 import PrimaryButton from "@/Components/PrimaryButton";
 import InputError from "@/Components/InputError";
-import TextInput from "./TextInput";
 import {faHeart} from "@fortawesome/free-solid-svg-icons";
 import {faHeart as faHeartRegular} from "@fortawesome/free-regular-svg-icons";
 import Avatar from "@mui/material/Avatar";
 import CreateCommentReply from "@/Components/CreateCommentReply.jsx";
+import {styled} from "@mui/material/styles";
+import Button from "@mui/material/Button";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload.js";
 
 const CommentList = ({ comments, handleLikeComment, handleUnlikeComment }) => {
     const { auth } = usePage().props;
@@ -18,8 +20,19 @@ const CommentList = ({ comments, handleLikeComment, handleUnlikeComment }) => {
     const { data, setData, post, reset, clearErrors, errors } = useForm({ content: "" });
     const fileInputRef = useRef(null);
 
-    const [replyingCommentId, setReplyingCommentId] = useState(null); // Estado para manejar respuestas
+    const [replyingCommentId, setReplyingCommentId] = useState(null);
 
+    const VisuallyHiddenInput = styled('input')({
+        clip: 'rect(0 0 0 0)',
+        clipPath: 'inset(50%)',
+        height: 1,
+        overflow: 'hidden',
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        whiteSpace: 'nowrap',
+        width: 1,
+    });
     const submit = (commentId, e) => {
         e.preventDefault();
         post(route("comments.update", commentId), {
@@ -55,7 +68,6 @@ const CommentList = ({ comments, handleLikeComment, handleUnlikeComment }) => {
         console.log(comments.map(comment => comment.likes));
     }, []);
 
-    // Función para renderizar los comentarios de forma recursiva
     const renderComments = (comments) => {
         return comments.map(comment => {
             const isLiked = comment.likes.some(like => like.id === auth.user.id);
@@ -99,10 +111,24 @@ const CommentList = ({ comments, handleLikeComment, handleUnlikeComment }) => {
                                 <form onSubmit={(e) => submit(comment.id, e)}>
                                     <textarea value={data.content} onChange={(e) => setData("content", e.target.value)} className="mt-2 w-full text-gray-900 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"></textarea>
                                     <InputError content={errors.content} className="mt-2" />
-                                    <TextInput label="Imagen" type="file" name="image" id="image" ref={fileInputRef} onChange={(e) => setData('image', e.target.files[0])} />
+                                    <Button
+                                        component="label"
+                                        role={undefined}
+                                        variant="contained"
+                                        tabIndex={-1}
+                                        startIcon={<CloudUploadIcon/>}
+                                        size='medium'
+                                        color='secondary'
+                                    >
+                                        Imagen
+                                        <VisuallyHiddenInput type="file" name='image' id='image' ref={fileInputRef}
+                                                             onChange={(e) => setData('image', e.target.files[0])}/>
+                                    </Button>
                                     <div className="space-x-2 mt-2">
-                                        <PrimaryButton>Save</PrimaryButton>
-                                        <button type="button" onClick={cancelEditing}>Cancel</button>
+                                        <PrimaryButton className='bg-primary-400 hover:bg-primary-500'>Save</PrimaryButton>
+                                        <Button onClick={cancelEditing} variant="contained" color="error">
+                                            Cancel
+                                        </Button>
                                     </div>
                                 </form>
                             ) : (

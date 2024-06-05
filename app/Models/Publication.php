@@ -11,15 +11,6 @@ class Publication extends Model
 {
     use HasFactory, Searchable;
 
-    // protected $fillable = [
-    //     'user_id',
-    //     'content',
-    //     'image',
-    //     'is_published',
-    //     'published_at',
-    //     'likes'
-    // ];
-
     protected $guarded = [];
 
 

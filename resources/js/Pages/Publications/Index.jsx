@@ -16,7 +16,7 @@ import CardContent from '@mui/joy/CardContent';
 import CardOverflow from '@mui/joy/CardOverflow';
 import Typography from '@mui/joy/Typography';
 import TextField from '@mui/material/TextField';
-import {useEffect, useRef, useState} from "react";
+import { useRef, useState} from "react";
 import CreatePublicationDialog from "@/Components/CreatePublicationDialog.jsx";
 import QueryStatsIcon from '@mui/icons-material/QueryStats';
 import AllInboxIcon from '@mui/icons-material/AllInbox';
@@ -30,7 +30,7 @@ export default function Index({auth, user, publications, publicationsForUser, to
         image: "",
     });
     const [keywords, setKeywords] = useState('');
-    // const keywords = useRef('');
+
     const crownColors = ["text-yellow-500", "text-slate-500", "text-[#bf8970] "];
 
     const [value, setValue] = React.useState(0);
@@ -47,11 +47,6 @@ export default function Index({auth, user, publications, publicationsForUser, to
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
-
-    useEffect(() => {
-        // console.log(publicationsForUser);
-        // console.log(publications)
-    }, []);
 
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {

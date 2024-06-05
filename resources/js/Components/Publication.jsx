@@ -14,9 +14,8 @@ import TextInput from "./TextInput";
 
 dayjs.extend(relativeTime);
 
-export default function Publication({ publication, followers }) {
+export default function Publication({ publication }) {
   const { auth, likePublications = [], likeComments = [], followers: pageFollowers = [] } = usePage().props;
-  const authUser = usePage().props.auth.user;
   const [editing, setEditing] = useState(false);
   const [liked, setLiked] = useState(publication.liked);
   const [followed, setFollowed] = useState(publication.followed);
@@ -26,9 +25,8 @@ export default function Publication({ publication, followers }) {
 
   const fileInputRef = useRef(null);
 
-  const isFollowing = pageFollowers.includes(publication.user.id);
   const isAuthor = auth.user.id === publication.user.id;
-  const { data, setData, patch, clearErrors, reset, errors, post } = useForm({
+  const { data, setData, clearErrors, reset, errors, post } = useForm({
     content: publication.content,
     image: publication.image,
   });
@@ -59,7 +57,7 @@ export default function Publication({ publication, followers }) {
     });
   };
 
-  const handleUnlike = (publicationId, e) => {
+  const handleUnlike = (publicationId) => {
     post(route("publications.unlike", publicationId), {
       onSuccess: () => {
         setLiked(false);

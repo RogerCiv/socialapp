@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-
     public function follow(Request $request, User $user)
     {
         $data = $request->validate([

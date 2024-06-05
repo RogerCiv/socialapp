@@ -11,12 +11,6 @@ class Comment extends Model
 {
     use HasFactory;
 
-    // protected $fillable = [
-    //     'publication_id',
-    //     'user_id',
-    //     'content',
-    //     'likes'
-    // ];
 
     protected $guarded = [];
 
@@ -33,7 +27,7 @@ class Comment extends Model
     public function likes()
     {
         return $this->belongsToMany(User::class, 'like_comments')
-            ->withTimestamps(); // assuming you have a pivot table 'likes'
+            ->withTimestamps();
     }
 
     public function replies()
