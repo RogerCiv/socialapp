@@ -54,7 +54,7 @@ class ProfileController extends Controller
             ->where('f.user_id', $user->id) // Filtrar por el id del usuario seguido
             ->get();
 
-        $comments = Publication::with('comments')->where('user_id',$user->id)->get();
+        $comments = Publication::with('comments')->where('user_id',$user->id)->latest()->get();
         return Inertia::render('Profile/View', [
             'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => session('status'),
@@ -126,7 +126,6 @@ class ProfileController extends Controller
 
         return Redirect::route('profile.edit');
     }
-
 
     /**
      * Delete the user's account.

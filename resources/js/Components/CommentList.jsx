@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faThumbsUp, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
+import {  faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import dayjs from "dayjs";
 import { useForm, usePage,Link } from "@inertiajs/react";
 import Dropdown from "@/Components/Dropdown";
@@ -12,15 +12,7 @@ import {faHeart as faHeartRegular} from "@fortawesome/free-regular-svg-icons";
 import Avatar from "@mui/material/Avatar";
 import CreateCommentReply from "@/Components/CreateCommentReply.jsx";
 
-const MyComponent = () => {
-    return (
-        <div>
-            <FontAwesomeIcon icon={faHeartRegular} className="mr-2 text-primary-600" />
-            <FontAwesomeIcon icon={faHeartSolid} className="mr-2 text-text-950" />
-        </div>
-    );
-};
-const CommentList = ({ comments, likedComments, handleLikeComment, handleUnlikeComment }) => {
+const CommentList = ({ comments, handleLikeComment, handleUnlikeComment }) => {
     const { auth } = usePage().props;
     const [editingCommentId, setEditingCommentId] = useState(null);
     const { data, setData, post, reset, clearErrors, errors } = useForm({ content: "" });
@@ -66,9 +58,7 @@ const CommentList = ({ comments, likedComments, handleLikeComment, handleUnlikeC
     // Función para renderizar los comentarios de forma recursiva
     const renderComments = (comments) => {
         return comments.map(comment => {
-            const isAuthor = auth.user.id === comment.user.id;
             const isLiked = comment.likes.some(like => like.id === auth.user.id);
-
             return (
                 <div key={comment.id} className="border-t border-accent-400 pt-4 flex flex-col space-y-4 mb-2">
                     <div className="flex items-start space-x-4">

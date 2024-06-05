@@ -1,7 +1,5 @@
 import React, { useRef } from "react";
 import { useForm } from "@inertiajs/react";
-import TextInput from "@/Components/TextInput";
-import PrimaryButton from "@/Components/PrimaryButton";
 import InputError from "@/Components/InputError";
 import Button from "@mui/material/Button";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload.js";

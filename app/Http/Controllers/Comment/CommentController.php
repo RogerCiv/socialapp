@@ -110,18 +110,10 @@ class CommentController extends Controller
 
         return redirect()->back();
     }
-
-
-
-
     public function destroy(Comment $comment)
     {
-
         Gate::authorize('delete', $comment);
-
         $comment->delete();
-
-        // return redirect(route('publications.index'));
         return redirect()->back();
     }
 
