@@ -24,32 +24,37 @@ class CommentController extends Controller
         });
         return view('publications.index', compact('comments'));
     }
-
-
     public function store(Request $request)
     {
-
         $request->validate([
             'content' => 'required|string',
-            'publication_id' => 'required|integer|exists:publications,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp' // Validación de la imagen
+            'publication_id' => 'nullable|integer|exists:publications,id',
+            'parent_id' => 'nullable|integer|exists:comments,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048'
         ]);
 
-//        dd($request->all());
-//        dd($request->content);
         $comment = new Comment();
         $comment->content = $request->input('content');
-        $comment->publication_id = $request->publication_id;
         $comment->user_id = auth()->id();
+
+        if ($request->has('parent_id')) {
+            $comment->parent_id = $request->input('parent_id');
+
+            // Obtener el publication_id del comentario padre
+            $parentComment = Comment::find($request->input('parent_id'));
+            $comment->publication_id = $parentComment->publication_id;
+        } else {
+            $comment->publication_id = $request->input('publication_id');
+        }
 
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('comments', 'public');
-            $comment->image = $imagePath; // Asume que tienes una columna 'image' en tu tabla 'comments'
+            $comment->image = $imagePath;
         }
 
         $comment->save();
 
-        return redirect()->back();
+        return redirect()->back()->with('message', 'Comment or reply created successfully!');
     }
     public function like( $commentId)
     {

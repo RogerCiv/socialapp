@@ -10,6 +10,7 @@ import TextInput from "./TextInput";
 import {faHeart} from "@fortawesome/free-solid-svg-icons";
 import {faHeart as faHeartRegular} from "@fortawesome/free-regular-svg-icons";
 import Avatar from "@mui/material/Avatar";
+import CreateCommentReply from "@/Components/CreateCommentReply.jsx";
 
 const MyComponent = () => {
     return (
@@ -19,11 +20,13 @@ const MyComponent = () => {
         </div>
     );
 };
-const CommentList = ({ comments,likedComments, handleLikeComment, handleUnlikeComment }) => {
+const CommentList = ({ comments, likedComments, handleLikeComment, handleUnlikeComment }) => {
     const { auth } = usePage().props;
     const [editingCommentId, setEditingCommentId] = useState(null);
     const { data, setData, post, reset, clearErrors, errors } = useForm({ content: "" });
     const fileInputRef = useRef(null);
+
+    const [replyingCommentId, setReplyingCommentId] = useState(null); // Estado para manejar respuestas
 
     const submit = (commentId, e) => {
         e.preventDefault();
@@ -48,35 +51,42 @@ const CommentList = ({ comments,likedComments, handleLikeComment, handleUnlikeCo
         clearErrors();
     };
 
+    const handleReply = (commentId) => {
+        setReplyingCommentId(commentId);
+    };
+
+    const cancelReplying = () => {
+        setReplyingCommentId(null);
+    };
+
     useEffect(() => {
         console.log(comments.map(comment => comment.likes));
     }, []);
 
-    return (
-        <div className="mt-4">
-            {comments.map(comment => {
-                const isAuthor = auth.user.id === comment.user.id;
-                const isLiked = comment.likes.some(like => like.id === auth.user.id);
+    // Función para renderizar los comentarios de forma recursiva
+    const renderComments = (comments) => {
+        return comments.map(comment => {
+            const isAuthor = auth.user.id === comment.user.id;
+            const isLiked = comment.likes.some(like => like.id === auth.user.id);
 
-                return (
-                    <div key={comment.id} className="border-t border-accent-400 pt-4 flex items-start space-x-4 mb-2">
-                        {/*<img className="rounded-full w-10 h-10" src={comment.user.avatar ? `/storage/${comment.user.avatar}` : '/img/avatar_default.jpg'} alt={comment.user.name} />*/}
-                        <Link href={route('profile', {name: comment.user.name})}>
-                        <Avatar
-                            alt={`${comment.user.name} Avatar`}
-                            src={comment.user.avatar ? `/storage/${comment.user.avatar}` : "/img/avatar_default.jpg"}
-                            sx={{ width: 45, height: 45 }}
-                            className='border border-2 border-accent-500 hover:border-accent-300'
-                        />
+            return (
+                <div key={comment.id} className="border-t border-accent-400 pt-4 flex flex-col space-y-4 mb-2">
+                    <div className="flex items-start space-x-4">
+                        <Link href={route('profile', { name: comment.user.name })}>
+                            <Avatar
+                                alt={`${comment.user.name} Avatar`}
+                                src={comment.user.avatar ? `/storage/${comment.user.avatar}` : "/img/avatar_default.jpg"}
+                                sx={{ width: 45, height: 45 }}
+                                className='border border-2 border-accent-500 hover:border-accent-300'
+                            />
                         </Link>
                         <div className="w-full">
                             <div className="flex items-center space-x-2">
-                                <Link href={route('profile', {name: comment.user.name})}>
-
-                                <h5 className="text-sm font-bold text-text-900">{comment.user.name}</h5>
-                                <small className="text-sm text-text-600">{dayjs(comment.created_at).fromNow()}</small>
+                                <Link href={route('profile', { name: comment.user.name })}>
+                                    <h5 className="text-sm font-bold text-text-900">{comment.user.name}</h5>
+                                    <small className="text-sm text-text-600">{dayjs(comment.created_at).fromNow()}</small>
                                 </Link>
-                                {isAuthor && (
+                                {auth.user.id === comment.user.id && (
                                     <Dropdown>
                                         <Dropdown.Trigger>
                                             <button className="text-primary-500">
@@ -114,28 +124,54 @@ const CommentList = ({ comments,likedComments, handleLikeComment, handleUnlikeCo
                                 </div>
                             )}
 
-                            <div className="mt-2">
+                            <div className="mt-2 flex items-center space-x-2">
                                 <button
                                     className="flex items-center"
                                     onClick={(e) => isLiked ? handleUnlikeComment(comment.id, e) : handleLikeComment(comment.id, e)}
                                 >
-                                    {
-                                        isLiked ? (
-                                                <FontAwesomeIcon icon={faHeart} className="mr-2 text-primary-600" />
-
-                                        ) : (
-                                            <FontAwesomeIcon icon={faHeartRegular} className="mr-2 text-text-950" />
-                                        )
-                                    }
-                                    {/*<FontAwesomeIcon icon={faThumbsUp} className="mr-2" />*/}
+                                    {isLiked ? (
+                                        <FontAwesomeIcon icon={faHeart} className="mr-2 text-primary-600" />
+                                    ) : (
+                                        <FontAwesomeIcon icon={faHeartRegular} className="mr-2 text-text-950" />
+                                    )}
                                     <p className='text-text-600 text-base font-semibold'>{comment.likes.length}</p>
-
                                 </button>
+                                <button className="ml-4 text-primary-500" onClick={() => handleReply(comment.id)}>Reply</button>
                             </div>
+
+                            {replyingCommentId === comment.id && (
+                                <div className="mt-4 ml-10">
+                                    <CreateCommentReply parentCommentId={comment.id} onCancel={cancelReplying} />
+                                </div>
+                            )}
                         </div>
                     </div>
-                );
-            })}
+
+                    {comment.replies && comment.replies.length > 0 && (
+                        <div className="ml-12 mt-4 space-y-4">
+                            {renderComments(comment.replies)}
+                        </div>
+                    )}
+                </div>
+            );
+        });
+    };
+
+    // Agrupar los comentarios por parent_id
+    const nestedComments = (comments, parentId = null) => {
+        return comments
+            .filter(comment => comment.parent_id === parentId)
+            .map(comment => ({
+                ...comment,
+                replies: nestedComments(comments, comment.id)
+            }));
+    };
+
+    const commentsTree = nestedComments(comments);
+
+    return (
+        <div className="mt-4">
+            {renderComments(commentsTree)}
         </div>
     );
 };
