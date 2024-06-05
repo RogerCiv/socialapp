@@ -66,21 +66,21 @@ class PublicationController extends Controller
         $top3Pub = Publication::select('user_id', DB::raw('count(*) as publications_count'))
             ->groupBy('user_id')
             ->orderByDesc('publications_count')
-            ->with('user:id,name,avatar') // Para obtener los detalles del usuario
-            ->take(3) // Puedes ajustar el número según lo necesites
+            ->with('user:id,name,avatar')
+            ->take(3)
             ->get();
 
         $top3Comments = Comment::select('user_id', DB::raw('count(*) as comments_count'))
             ->groupBy('user_id')
             ->orderByDesc('comments_count')
-            ->with('user:id,name,avatar') // Para obtener los detalles del usuario
-            ->take(3) // Puedes ajustar el número según lo necesites
+            ->with('user:id,name,avatar')
+            ->take(3)
             ->get();
         $top3LikedPublications = LikePublication::select('publication_id', DB::raw('count(*) as likes_count'))
             ->groupBy('publication_id')
             ->orderByDesc('likes_count')
-            ->with('publication:id,content') // Obtener los detalles de la publicación
-            ->take(3) // Puedes ajustar el número según lo necesites
+            ->with('publication:id,content')
+            ->take(3)
             ->get();
 
 
@@ -124,8 +124,7 @@ class PublicationController extends Controller
 
   public function show(Publication $publication)
   {
-    $userId = auth()->id();
-    // return new PublicationResource($publication->load('user', 'likePublications','comments'));
+
     return inertia('Publications/PublicationShow', [
       'publication' => $publication->load('comments', 'user'), // Carga los comentarios y el usuario de la publicación
   ]);
@@ -142,12 +141,10 @@ class PublicationController extends Controller
         $top3Pub = Publication::select('user_id', DB::raw('count(*) as publications_count'))
             ->groupBy('user_id')
             ->orderByDesc('publications_count')
-            ->with('user:id,name,avatar') // Para obtener los detalles del usuario
-            ->take(3) // Puedes ajustar el número según lo necesites
+            ->with('user:id,name,avatar')
+            ->take(3)
             ->get();
-        // dd($publicationsByUser);
-        // dd($followers);
-        // dd($top3Pub);
+
         return Inertia::render('Info/Index', [
             'publicationsByUser' =>  $publicationsByUser,
             'followers' => $followers,
@@ -157,8 +154,7 @@ class PublicationController extends Controller
 
   public function update(Request $request, Publication $publication): RedirectResponse
   {
-    //
-//     dd($request->all(), $publication);
+
     Gate::authorize('update', $publication);
 
     $validated = $request->validate([
