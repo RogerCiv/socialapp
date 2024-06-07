@@ -106,7 +106,7 @@ export default function View({
     return (
         <AuthenticatedLayout user={auth.user}>
             <Head title={`Perfil de ${user.name}`}/>
-            <div className="container mx-auto bg-background-100 space-y-10">
+            <div className="container max-w-7xl mx-auto bg-background-100 space-y-10">
                 <div className="group relative bg-background-200 space-x-8 mt-8">
                     <img
                         className="w-full h-[200px] object-cover"

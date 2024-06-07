@@ -17,7 +17,7 @@ export default function Search({publications, users, auth, user}) {
         <>
             <AuthenticatedLayout user={auth.user}>
                 <Head title="Search"/>
-                <div className='flex flex-col justify-center md:max-w-6xl md:mx-auto p-4'>
+                <div className='flex flex-col max-w-7xl mx-auto justify-center md:max-w-6xl md:mx-auto p-4'>
                         <div className='flex flex-col justify-center items-center space-y-8'>
                             <h2 className='text-lg font-bold text-text-950'>Usuarios</h2>
                                     {users.length === 0 && <Typography fontWeight="md" textAlign='center'   sx={{ color: 'var(--text-800)'}}>No se encontraron usuarios...</Typography>}
