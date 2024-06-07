@@ -51,14 +51,9 @@ export default function Index({auth, user, publications, publicationsForUser, to
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
             router.get(route('search', encodeURIComponent(keywords)));
-            search();
         }
     };
 
-    const search = () => {
-
-        console.log('Realizar búsqueda con palabras clave:', keywords);
-    };
     const submit = (e) => {
         e.preventDefault();
         console.log(data);

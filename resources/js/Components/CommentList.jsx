@@ -86,7 +86,7 @@ const CommentList = ({ comments, handleLikeComment, handleUnlikeComment }) => {
                             <div className="flex items-center space-x-2">
                                 <Link href={route('profile', { name: comment.user.name })}>
                                     <h5 className="text-sm font-bold text-text-900">{comment.user.name}</h5>
-                                    <small className="text-sm text-text-600">{dayjs(comment.created_at).fromNow()}</small>
+                                    <small className="text-sm text-text-600">{dayjs(comment.created_at).fromNow()}...</small>
                                 </Link>
                                 {auth.user.id === comment.user.id && (
                                     <Dropdown>

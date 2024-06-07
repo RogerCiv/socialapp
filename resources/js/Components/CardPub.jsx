@@ -155,7 +155,7 @@ export default function CardPub({publication}) {
                         <div>
                             <h5 className="text-sm font-bold text-text-950">{publication.user.name}</h5>
                             <small
-                                className="ml-2 text-sm text-text-600">{dayjs(publication.created_at).fromNow()}</small>
+                                className="ml-2 text-sm text-text-600">{dayjs(publication.created_at).fromNow()}...</small>
                         </div>
                     </div>
                 </Link>
