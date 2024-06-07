@@ -95,7 +95,7 @@ export default function Login({ status, canResetPassword }) {
                     )}
 
                     <PrimaryButton className="ms-4 bg-primary-400 hover:bg-primary-500" disabled={processing} >
-                        Log in
+                        Login
                     </PrimaryButton>
                 </div>
             </form>
