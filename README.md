@@ -1,66 +1,188 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Social Network Project
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Documentación de la aplicación
 
-## About Laravel
+### Introducción a la aplicación (Getting Started)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+ <img src="public/img/logo.webp" alt="SocialHlanz" style="width: 400px;"/>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Bienvenido a la red social desarrollada como parte del trabajo final de grado para el Grado Superior en Desarrollo Web. Esta aplicación permite a los usuarios registrarse, iniciar sesión, crear publicaciones, comentar en las publicaciones y dar "me gusta" a publicaciones y comentarios.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+###  Manual de Instalación
 
-## Learning Laravel
+#### Requisitos previos
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- **Docker**: Asegúrate de tener Docker instalado en tu sistema. Puedes descargarlo desde [aquí](https://www.docker.com/products/docker-desktop).
+- **Laravel Sail**: Utilizaremos Laravel Sail para gestionar los contenedores Docker.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+#### Pasos de instalación
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+1. **Clonar el repositorio**:
+    ```bash
+    git clone https://github.com/tu-usuario/tu-repositorio.git
+    cd tu-repositorio
+    ```
 
-## Laravel Sponsors
+2. **Copiar el archivo de entorno**:
+    ```bash
+    cp .env.example .env
+    ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+3. **Configurar variables de entorno**:
+    Abre el archivo `.env` y configura las variables necesarias como la conexión a la base de datos.
+    ```bash
+    DB_CONNECTION=mysql
+    DB_HOST=mysql
+    DB_PORT=3306
+    DB_DATABASE=laravel(nombre que quieras ponerle a la base de datos)
+    DB_USERNAME=usuario
+    DB_PASSWORD=password
+    ```
+   **Para configurar mailpit y poder verificar el registro**
+    ```bash
+    MAIL_MAILER=smtp
+    MAIL_HOST=mailpit
+    MAIL_PORT=1025
+    MAIL_USERNAME=null
+    MAIL_PASSWORD=null
+    MAIL_ENCRYPTION=null
+    MAIL_FROM_ADDRESS="hello@example.com"
+    MAIL_FROM_NAME="${APP_NAME}"
+    ```
+    **Para probar meilisearch añadir en el `.env` lo siguiente:**
+    ```bash
+    SCOUT_DRIVER=meilisearch
+    MEILISEARCH_NO_ANALYTICS=false
+    ```
 
-### Premium Partners
+    **Y para moficiar logos del admin panelm en el `.env`:**
+    ```bash
+    MOONSHINE_LOGO='/img/logo.webp'
+    MOONSHINE_LOGO_SMALL='/img/logo.webp'
+    MOONSHINE_TITLE='SocialHlanz'
+    ```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+4. **Instalar dependencias con Composer sin necesidad de tener instalado composer en tu máquina**:
+    ```bash
+    docker run --rm \
+    -u "$(id -u):$(id -g)" \
+    -v "$(pwd):/var/www/html" \
+    -w /var/www/html \
+    laravelsail/php83-composer:latest \
+    composer install --ignore-platform-reqs
+    ```
+    **Nota**: Si tienes Composer instalado en tu máquina, puedes ejecutar `composer install` en lugar del comando anterior.
 
-## Contributing
+5. **Levantar los contenedores Docker**:
+    ```bash
+    ./vendor/bin/sail up -d
+    ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+6. **Generar la clave de la aplicación**:
+    ```bash
+    ./vendor/bin/sail artisan key:generate
+    ```
 
-## Code of Conduct
+7. **Migrar la base de datos**:
+    ```bash
+    ./vendor/bin/sail artisan migrate
+    ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+8. **Sembrar la base de datos (opcional)**:
+    ```bash
+    ./vendor/bin/sail artisan db:seed
+    ```
+    **Nota**: Este comando añadirá datos de prueba a la base de datos.
+  
+9. **Generar usuario administrador hay 2 opciones**
+    ```bash
+    php artisan moonshine:user
+ 
+    ./vendor/bin/sail artisan moonshine:user
+    ```	
+10. **Instalar las dependencias de React**:
+    ```bash
+    ./vendor/bin/sail npm install
+    ```
 
-## Security Vulnerabilities
+11. **Compilar los assets de React**:
+    ```bash
+    ./vendor/bin/sail npm run dev
+    ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-## License
+La aplicación estará disponible en `http://localhost`.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Manual de usuario
+
+#### Registro e inicio de sesión
+
+- **Registro**:
+  1. Accede a la página de registro desde el enlace en la pantalla de inicio.
+  2. Completa el formulario con tu nombre, correo electrónico y contraseña.
+  3. Haz clic en "Registrarse".
+   **Nota:** En desarrollo entrar a `http://localhost:1025` para confirmar el registro con la verificación por email.
+
+- **Inicio de sesión**:
+  1. Accede a la página de inicio de sesión.
+  2. Introduce tu correo electrónico y contraseña.
+  3. Haz clic en "Iniciar sesión".
+
+#### Creación de publicaciones
+
+1. Una vez que hayas iniciado sesión, accede a la página de inicio (Feed).
+2. Haz clic en el botón "Crear Publicación".
+3. Completa el formulario con el contenido de tu publicación y, opcionalmente, una imagen.
+4. Haz clic en "Publicar".
+
+#### Comentarios y "Me gusta"
+
+- **Comentarios**:
+  1. Navega a una publicación.
+  2. Introduce tu comentario en el campo correspondiente.
+  3. Haz clic en "Comentar" 💬 :.
+
+- **Me gusta**:
+  - Para dar "me gusta" a una publicación o comentario, haz clic en el icono de "me gusta" ❤️ correspondiente.
+
+#### Perfil de usuario
+
+1. Accede a tu perfil desde el menú de navegación.
+2. Aquí puedes ver tus publicaciones, editar tu información de perfil y cambiar tu avatar.
+
+### Manual de administración
+
+#### Gestión de usuarios
+
+- **Para acceder al panel de administración entrar en `http://localhost/admin`**
+
+- **Visualización de usuarios**:
+  - Los administradores pueden ver una lista de todos los usuarios registrados.
+  - Para acceder a la lista de usuarios, navega al panel de administración y selecciona "Users".
+
+- **Edición y eliminación de usuarios**:
+  - Los administradores pueden editar la información de los usuarios o eliminarlos.
+  - Para editar o eliminar un usuario, selecciona el usuario de la lista y elige la acción correspondiente.
+
+#### Moderación de contenido
+
+- **Publicaciones y comentarios**:
+  - Los administradores pueden moderar publicaciones y comentarios.
+  - Para moderar contenido, navega al panel de administración y selecciona "Publications" o "Comments".
+
+
+## Conclusiones finales
+
+El proyecto ha alcanzado todos los objetivos propuestos, proporcionando una plataforma de red social funcional y amigable. Futuras ampliaciones podrían incluir un sistema de mensajería instantánea, notificaciones en tiempo real, y la internacionalización del sitio.
+
+## Bibliografía
+
+- [Documentación oficial de Laravel](https://laravel.com/docs/11.x)
+- [Documentación oficial de Laravel Sail](https://laravel.com/docs/11.x/sail)
+- [Documentación oficial de React](https://react.dev/)
+- [Manual de instalación y configuración de Laravel Sail](https://laravel.com/docs/11.x/sail) 
+- [Manual TailwindCSS](https://tailwindcss.com/docs)
+- [Manual Material UI components](https://mui.com/material-ui/getting-started/)
+- [Manual Moonshine AdminDashboard](https://moonshine-laravel.com/docs/resource/getting-started/installation)
+
+
