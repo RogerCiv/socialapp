@@ -121,6 +121,12 @@ Bienvenido a la red social desarrollada como parte del trabajo final de grado pa
  
     ./vendor/bin/sail artisan moonshine:user
     ```    
+
+10. **Enlazar el storage para las imagenes**
+    ```bash
+    ./vendor/bin/sail artisan storage:link
+    ```
+    
 10. **Instalar las dependencias de React**:
     ```bash
     ./vendor/bin/sail npm install
