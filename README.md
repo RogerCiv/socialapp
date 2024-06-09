@@ -2,8 +2,6 @@
 
 <img src="public/img/logo.webp" alt="SocialHlanz" style="width: 400px;"/>
 
-Bienvenido a la red social desarrollada como parte del trabajo final de grado para el Grado Superior en Desarrollo Web. Esta aplicación permite a los usuarios registrarse, iniciar sesión, crear publicaciones, comentar en las publicaciones y dar "me gusta" a publicaciones y comentarios.
-
 ## Tabla de Contenidos
 
 - [Social Network Project](#social-network-project)
@@ -41,7 +39,7 @@ Bienvenido a la red social desarrollada como parte del trabajo final de grado pa
 
 1. **Clonar el repositorio**:
     ```bash
-    git clone https://github.com/tu-usuario/tu-repositorio.git
+    git clone https://github.com/RogerCiv/socialapp.git
     cd tu-repositorio
     ```
 

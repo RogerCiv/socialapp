@@ -42,8 +42,7 @@ class PublicationController extends Controller
         $publicationsForUser = Publication::query()
             ->select('publications.*')
             ->leftJoin('follower_user AS f1', 'publications.user_id', '=', 'f1.follower_id')
-            ->leftJoin('follower_user AS f2', 'publications.user_id', '=', 'f2.user_id')
-            ->join('comments', 'comments.user_id', '=', 'publications.user_id')
+            ->join('follower_user AS f2', 'publications.user_id', '=', 'f2.user_id')
             ->where(function ($query) use ($user) {
                 $query->where('f1.user_id', $user->id)
                 ->orWhere('f2.follower_id', $user->id);
