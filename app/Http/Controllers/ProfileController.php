@@ -84,20 +84,20 @@ class ProfileController extends Controller
             'cover' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
+        $user = Auth::user();
+
         if ($request->hasFile('cover')) {
-            $cover = $request->file('cover')[0];
-            $coverPath = $cover->store('covers', 'public');
-
-
-            auth()->user()->update([
-                'cover' => $coverPath,
-            ]);
-
-            return response()->json(['cover' => $coverPath], 200);
+            $coverPath = $request->file('cover')->store('covers', ['disk' => 'public']);
+            if ($user->cover) {
+                Storage::disk('public')->delete($user->cover);
+            }
+            $user->cover = $coverPath;
+            $user->save();
         }
 
-        return response()->json(['error' => 'No file uploaded'], 400);
+        return back();
     }
+
 
     public function update(Request $request): RedirectResponse
     {

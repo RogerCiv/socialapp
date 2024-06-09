@@ -80,6 +80,12 @@ export default function Index({auth, user, publications, publicationsForUser, to
             },
         }),
     );
+    const StyledCard = styled(Card)(({ theme }) => ({
+        transition: 'transform 0.3s ease',
+        '&:hover': {
+            transform: 'scale(1.05)', // Aumenta el tamaño al hacer hover
+        },
+    }));
 
     return (
         <AuthenticatedLayout user={auth.user}>
@@ -171,7 +177,7 @@ export default function Index({auth, user, publications, publicationsForUser, to
                                  sx={{'@media (max-width: 768px)': {gridTemplateColumns: '1fr'}}}>
                                 {top3Pub.map((user, index) => (
                                     <Link href={route('profile', {name: user.user.name})} key={user.user.id}>
-                                        <Card orientation="horizontal" variant="solid" color="warning">
+                                        <StyledCard orientation="horizontal" variant="solid" color="warning" >
                                             <CardOverflow >
                                                 <AspectRatio variant="solid" color="warning" ratio="1"
                                                              sx={{width: 90, paddingTop: 1}}>
@@ -195,7 +201,7 @@ export default function Index({auth, user, publications, publicationsForUser, to
                                                 className={`absolute -top-2 right-0 h-8 w-8 ${crownColors[index]}`}
                                                 title={`Crown ${index + 1}`}
                                             />
-                                        </Card>
+                                        </StyledCard>
                                     </Link>
                                 ))}
                             </Box>
@@ -206,7 +212,7 @@ export default function Index({auth, user, publications, publicationsForUser, to
                                  sx={{'@media (max-width: 768px)': {gridTemplateColumns: '1fr'}}}>
                                 {top3Comments.map((comment, index) => (
                                     <Link href={route('profile', {name: comment.user.name})} key={comment.user.id}>
-                                        <Card orientation="horizontal" variant="solid" color="warning">
+                                        <StyledCard orientation="horizontal" variant="solid" color="warning">
                                             <CardOverflow >
                                                 <AspectRatio variant="solid" color="warning" ratio="1"
                                                              sx={{width: 90, paddingTop: 1}}>
@@ -230,7 +236,7 @@ export default function Index({auth, user, publications, publicationsForUser, to
                                                     className={`absolute -top-2 right-0 h-8 w-8 ${crownColors[index]}`}
                                                     title={`Crown ${index + 1}`}
                                                 />
-                                        </Card>
+                                        </StyledCard>
                                     </Link>
                                 ))}
                             </Box>
