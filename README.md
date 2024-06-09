@@ -72,6 +72,7 @@ Bienvenido a la red social desarrollada como parte del trabajo final de grado pa
    **Para probar meilisearch añadir en el `.env` lo siguiente**:
     ```bash
     SCOUT_DRIVER=meilisearch
+    MEILISEARCH_HOST=http://meilisearch:7700
     MEILISEARCH_NO_ANALYTICS=false
     ```
 
