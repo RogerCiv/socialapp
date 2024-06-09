@@ -80,6 +80,7 @@ export default function Index({auth, user, publications, publicationsForUser, to
             },
         }),
     );
+
     const StyledCard = styled(Card)(({ theme }) => ({
         transition: 'transform 0.3s ease',
         '&:hover': {

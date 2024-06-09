@@ -108,7 +108,8 @@ export default function View({
                 backgroundColor: 'rgba(110,224,78,0.32)',
             },
         }),
-    );const coverSrc = coverImageSrc ? coverImageSrc : (user.cover ? `/storage/${user.cover}` : '/img/cover-space.jpg');
+    );
+    const coverSrc = coverImageSrc ? coverImageSrc : (user.cover ? `/storage/${user.cover}` : '/img/cover-space.jpg');
 
     return (
         <AuthenticatedLayout user={auth.user}>
